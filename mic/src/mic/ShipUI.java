@@ -1,11 +1,10 @@
 package mic;
 
+import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
+import VASSAL.counters.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +14,9 @@ public class ShipUI extends Decorator implements EditablePiece {
     public static final String ID = "ship-ui;";
     private KeyStroke uiCommand = KeyStroke.getKeyStroke('M', java.awt.event.InputEvent.ALT_MASK);
     private KeyCommand[] commands;
+    private NavigationMenu navMenu = null;
+    private FreeRotator myRotator = null;
+
     public ShipUI() {
         this(null);
     }
@@ -46,13 +48,49 @@ public class ShipUI extends Decorator implements EditablePiece {
         return null;
     }
 
+    private static class NavigationMenu implements Drawable {
+        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
 
+        }
+        public boolean drawAboveCounters() {
+            return true;
+        }
+    }
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
         if(uiCommand.equals(stroke))
         {
             Util.logToChat("Triggered");
+
+            // Get the ship
+            GamePiece ship = getInner();
+
+            // Get the size of the ship
+
+            // get the location of the ship
+            Point shipPosition = ship.getPosition();
+
+            // get the map
+            Map aMap = ship.getMap();
+
+            // get the angle of the ship
+            double shipAngle = this.getRotator().getAngle(); //ship angle
+
+            //temp report this out
+            Util.logToChat("angle is :"+shipAngle);
+            Util.logToChat("Ship Localized Name: "+ship.getLocalizedName());
+            Util.logToChat("Ship Name: "+  ship.getName());
+            Util.logToChat("Ship Property 'xws': "+  ship.getProperty("xws"));
+            Util.logToChat("Ship Property 'size': "+  ship.getProperty("size"));
+
+            // Spawn the correct nav menu
+            if (this.navMenu == null) {
+                this.navMenu = new NavigationMenu();
+            }
+
+
+            //getMap().addDrawComponent(navMenu);
         }
         /*
         String hotKey = HotKeyConfigurer.getString(stroke);
@@ -105,7 +143,12 @@ public class ShipUI extends Decorator implements EditablePiece {
 
         return piece.keyEvent(stroke);
     }
-
+    private FreeRotator getRotator() {
+        if (this.myRotator == null) {
+            this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
+        }
+        return this.myRotator;
+    }
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
         this.piece.draw(graphics, i, i1, component, v);
     }
