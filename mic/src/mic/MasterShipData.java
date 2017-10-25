@@ -60,9 +60,17 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
+        @JsonProperty("maneuvers")
+        private int[][] maneuvers;
+
+
         @JsonProperty("size")
         private String size;
 
+        public int[][] getManeuvers()
+        {
+            return maneuvers;
+        }
         public int getAttack() {
             return attack;
         }

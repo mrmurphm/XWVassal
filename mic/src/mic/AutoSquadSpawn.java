@@ -1,17 +1,5 @@
 package mic;
 
-import static mic.Util.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.List;
-
-import javax.swing.*;
-
-import com.google.common.collect.Lists;
-
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
@@ -20,7 +8,17 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.List;
+
+import static mic.Util.*;
 
 /**
  * Created by Mic on 12/02/2017.
@@ -129,7 +127,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                             (int) startPosition.getY() + totalPilotHeight),
                     playerMap);
 
-            GamePiece dialPiece = ship.cloneDial();
+            // DIAL
+//            GamePiece dialPiece = ship.cloneDial();
+            GamePiece dialPiece = generateDial(ship);
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point(
                             (int) dialstartPosition.getX() + totalDialsWidth,
@@ -283,6 +283,73 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
     }
+
+    private GamePiece generateDial(VassalXWSPilotPieces ship)
+    {
+
+        MasterShipData.ShipData shipData = ship.getShipData();
+
+        int[][] maneuvers = shipData.getManeuvers();
+
+        // get the dial
+        PieceSlot dialSlot = ship.getDial();
+        GamePiece dial = dialSlot.getPiece();
+        // the initial idea is to have an AWing dial, without the Mask for moves, and generate them here.
+        // but to do that, i'll have to be able to ADD the mask to it.
+
+
+        return dial;
+    }
+
+    // THIS WORKS SO FAR
+/*    private GamePiece generateDial(VassalXWSPilotPieces ship)
+    {
+        String moves[] = new String[13];
+        moves[0] = "Turn Left";
+        moves[1] = "Bank Left";
+        moves[2] = "Straight";
+        moves[3] = "Bank Right";
+        moves[4] = "Turn Right";
+        moves[5] = "K Turn";
+        moves[6] = "Sloop Left";
+        moves[7] = "Sloop Right";
+        moves[8] = "Tallon Roll Left";
+        moves[9] = "Tallon Roll Right";
+        moves[10] = "-1 Left";
+        moves[11] = "-1 Straight";
+        moves[12] = "-1 Right";
+
+        String colors[] = new String[4];
+        colors[0] = null;
+        colors[1] = "white";
+        colors[2] = "green";
+        colors[3] = "red";
+
+        MasterShipData.ShipData shipData = ship.getShipData();
+        String xws = shipData.getXws();
+        int[][] maneuvers = shipData.getManeuvers();
+
+        String outString;
+        for(int i=0; i<maneuvers.length; i++)
+        {
+
+            int speed = i;
+            for(int j = 0; j < maneuvers[i].length; j++)
+            {
+                if(maneuvers[i][j] != 0)
+                {
+                    outString = new String();
+                    outString = speed + " " + colors[maneuvers[i][j]] + " " + moves[j];
+                    logToChat(outString);
+                }
+
+            }
+
+        }
+
+        // read from the local ships.json file
+        return null;
+    }*/
 
     public void addTo(Buildable parent) {
         loadData();
