@@ -129,7 +129,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             // DIAL
 //            GamePiece dialPiece = ship.cloneDial();
+
             GamePiece dialPiece = generateDial(ship);
+            // set the properties
+            dialPiece.setProperty("Craft ID #",ship.getDial().getPiece().getProperty("Craft ID #"));
+            dialPiece.setProperty("Pilot Name",ship.getDial().getPiece().getProperty("Pilot Name"));
+
+                dialPiece.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
+                dialPiece.setProperty("Craft ID #", ship.cloneDial().getProperty("Craft ID #"));
+
+
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point(
                             (int) dialstartPosition.getX() + totalDialsWidth,
@@ -291,12 +300,69 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         int[][] maneuvers = shipData.getManeuvers();
 
-        // get the dial
-        PieceSlot dialSlot = ship.getDial();
-        GamePiece dial = dialSlot.getPiece();
-        // the initial idea is to have an AWing dial, without the Mask for moves, and generate them here.
-        // but to do that, i'll have to be able to ADD the mask to it.
 
+        String faction = ship.getPilotData().getFaction();
+
+        PieceSlot rebelDialSlot = null;
+        PieceSlot imperialDialSlot = null;
+        PieceSlot scumDialSlot = null;
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        for (PieceSlot pieceSlot : pieceSlots) {
+            String slotName = pieceSlot.getConfigureName();
+            if (slotName.startsWith("dial for Rebels") && rebelDialSlot == null) {
+                rebelDialSlot = pieceSlot;
+                continue;
+            } else if (slotName.startsWith("dial for Imperials") && imperialDialSlot == null) {
+                imperialDialSlot = pieceSlot;
+                continue;
+            } else if (slotName.startsWith("dial for Scum") && scumDialSlot == null) {
+                scumDialSlot = pieceSlot;
+                continue;
+            }
+
+
+
+            /*
+            if (listWidget.getConfigureName().trim().equals("AutoGenDial Pallet")) {
+
+                logToChat("3");
+                List<PieceSlot> slots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
+                logToChat("4");
+                for (PieceSlot slot : slots) {
+                    logToChat("5");
+                    String slotName = slot == null ? "" : slot.getConfigureName();
+                    logToChat("6");
+                    if (slotName.startsWith("dial for Rebels") && rebelDialSlot == null) {
+                        rebelDialSlot = slot;
+                        logToChat("found rebel dial slot");
+                        continue;
+                    } else if (slotName.startsWith("dial for Imperials") && imperialDialSlot == null) {
+                        imperialDialSlot = slot;
+                        logToChat("found Imperial dial slot");
+                        continue;
+                    } else if (slotName.startsWith("dial for Scum") && scumDialSlot == null) {
+                        scumDialSlot = slot;
+                        logToChat("found Scum dial slot");
+                        continue;
+                    }
+                }
+            }*/
+        }
+        GamePiece dial = null;
+        if(faction.contentEquals("Rebel Alliance"))
+        {
+
+            dial = mic.Util.newPiece(rebelDialSlot);
+        }else if(faction.contentEquals("Galactic Empire")) {
+
+            dial = mic.Util.newPiece(imperialDialSlot);
+
+        }else if(faction.contentEquals("Scum and Villainy")) {
+
+            dial = mic.Util.newPiece(scumDialSlot);
+
+        }
 
         return dial;
     }
