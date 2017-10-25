@@ -322,32 +322,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }
 
 
-
-            /*
-            if (listWidget.getConfigureName().trim().equals("AutoGenDial Pallet")) {
-
-                logToChat("3");
-                List<PieceSlot> slots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
-                logToChat("4");
-                for (PieceSlot slot : slots) {
-                    logToChat("5");
-                    String slotName = slot == null ? "" : slot.getConfigureName();
-                    logToChat("6");
-                    if (slotName.startsWith("dial for Rebels") && rebelDialSlot == null) {
-                        rebelDialSlot = slot;
-                        logToChat("found rebel dial slot");
-                        continue;
-                    } else if (slotName.startsWith("dial for Imperials") && imperialDialSlot == null) {
-                        imperialDialSlot = slot;
-                        logToChat("found Imperial dial slot");
-                        continue;
-                    } else if (slotName.startsWith("dial for Scum") && scumDialSlot == null) {
-                        scumDialSlot = slot;
-                        logToChat("found Scum dial slot");
-                        continue;
-                    }
-                }
-            }*/
         }
         GamePiece dial = null;
         if(faction.contentEquals("Rebel Alliance"))
@@ -366,56 +340,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         return dial;
     }
-
-    // THIS WORKS SO FAR
-/*    private GamePiece generateDial(VassalXWSPilotPieces ship)
-    {
-        String moves[] = new String[13];
-        moves[0] = "Turn Left";
-        moves[1] = "Bank Left";
-        moves[2] = "Straight";
-        moves[3] = "Bank Right";
-        moves[4] = "Turn Right";
-        moves[5] = "K Turn";
-        moves[6] = "Sloop Left";
-        moves[7] = "Sloop Right";
-        moves[8] = "Tallon Roll Left";
-        moves[9] = "Tallon Roll Right";
-        moves[10] = "-1 Left";
-        moves[11] = "-1 Straight";
-        moves[12] = "-1 Right";
-
-        String colors[] = new String[4];
-        colors[0] = null;
-        colors[1] = "white";
-        colors[2] = "green";
-        colors[3] = "red";
-
-        MasterShipData.ShipData shipData = ship.getShipData();
-        String xws = shipData.getXws();
-        int[][] maneuvers = shipData.getManeuvers();
-
-        String outString;
-        for(int i=0; i<maneuvers.length; i++)
-        {
-
-            int speed = i;
-            for(int j = 0; j < maneuvers[i].length; j++)
-            {
-                if(maneuvers[i][j] != 0)
-                {
-                    outString = new String();
-                    outString = speed + " " + colors[maneuvers[i][j]] + " " + moves[j];
-                    logToChat(outString);
-                }
-
-            }
-
-        }
-
-        // read from the local ships.json file
-        return null;
-    }*/
+    
 
     public void addTo(Buildable parent) {
         loadData();
