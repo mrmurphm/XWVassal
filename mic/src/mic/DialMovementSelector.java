@@ -2,7 +2,6 @@ package mic;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
-import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.EditablePiece;
 import VASSAL.counters.GamePiece;
@@ -61,37 +60,38 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
-        String hotKey = HotKeyConfigurer.getString(stroke);
-
-        // check to see if the this code needs to respond to the event
-        if(hotKey.equals("COMMA")){
-/*
-            // get the text from the damage card
-            GamePiece damageCard = getInner();
-
-            // get the location of the damage card
-            Point aPoint = damageCard.getPosition();
-
-            // get a new crit token
-            GamePiece critToken = newPiece(findPieceSlotByName("Crit"));
-
-            // check to see if the damage card is flipped
-            if(damageCard.getProperty("isFlipped") != null &&((String) damageCard.getProperty("isFlipped")).equals("1") ) {
-
-                // If the card is flipped, change the text on the crit token
-                critToken.setProperty("critID", damageCard.getLocalizedName());
-            }
-
-            // spawn the new token on the board
-            spawnPiece(critToken, aPoint, damageCard.getMap());
-*/
-        }else if(hotKey.equals("PERIOD"))
+        if(stroke.getKeyCode() == leftCommand.getKeyCode() && stroke.getKeyEventType() == leftCommand.getKeyEventType())
         {
 
+            GamePiece dial = getInner();
+
+            String layer = (String)dial.getProperty("MoveLayer");
+            Integer nextLayer = Integer.valueOf(layer) - 1;
+
+            if(nextLayer.intValue() < 1)
+            {
+                nextLayer = new Integer(114);
+            }
+
+            getInner().setProperty("MoveLayer",nextLayer.toString());
+
+        }else if(stroke.getKeyCode() == rightCommand.getKeyCode() && stroke.getKeyEventType() == rightCommand.getKeyEventType())
+        {
+            GamePiece dial = getInner();
+
+            String layer = (String)dial.getProperty("MoveLayer");
+            Integer nextLayer = Integer.valueOf(layer) + 1;
+
+            if(nextLayer.intValue() > 114)
+            {
+                nextLayer = new Integer(1);
+            }
+
+            getInner().setProperty("MoveLayer",nextLayer.toString());
         }
 
-        //return piece.keyEvent(stroke);
-        return null;
+        return piece.keyEvent(stroke);
+
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
