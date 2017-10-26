@@ -129,14 +129,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             // DIAL
 //            GamePiece dialPiece = ship.cloneDial();
-
             GamePiece dialPiece = generateDial(ship);
-            // set the properties
-            dialPiece.setProperty("Craft ID #",ship.getDial().getPiece().getProperty("Craft ID #"));
-            dialPiece.setProperty("Pilot Name",ship.getDial().getPiece().getProperty("Pilot Name"));
-
-                dialPiece.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
-                dialPiece.setProperty("Craft ID #", ship.cloneDial().getProperty("Craft ID #"));
 
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
@@ -298,7 +291,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         MasterShipData.ShipData shipData = ship.getShipData();
 
-        int[][] maneuvers = shipData.getManeuvers();
+
 
 
         String faction = ship.getPilotData().getFaction();
@@ -338,9 +331,20 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         }
 
+        dial.setProperty("ShipXwsId",ship.getShipData().getXws());
+        dial.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
+        dial.setProperty("Craft ID #", ship.cloneDial().getProperty("Craft ID #"));
+
+        // store the valid move layers property
+        String validMoveLayers = DialMovementSelector.getValidMoveLayers(shipData.getManeuvers(),ship.getShipData().getXws());
+        dial.setProperty("ValidMoveLayers",validMoveLayers);
+
+        // set the first move
+        String firstLevel = DialMovementSelector.getFirstLevel(validMoveLayers);
+        dial.setProperty("MoveLayer",firstLevel);
         return dial;
     }
-    
+
 
     public void addTo(Buildable parent) {
         loadData();
