@@ -12,27 +12,30 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+/**
+ * DialMovementSelector
+ *
+ * This class decorates the generic auto-spawned dials.
+ * It handles the cycle commands on the dial (COMMA and PERIOD), only selecting moves that are available to that dial.
+ */
 public class DialMovementSelector extends Decorator implements EditablePiece {
 
     public static final String ID = "dial-movement-selector;";
 
+    // command for next move
+    private KeyStroke rightCommand = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD,KeyEvent.BUTTON1_DOWN_MASK);
 
-    private KeyStroke rightCommand =
-            KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD,KeyEvent.BUTTON1_DOWN_MASK);
-
-    private KeyStroke leftCommand =
-            KeyStroke.getKeyStroke(KeyEvent.VK_COMMA,KeyEvent.BUTTON1_DOWN_MASK);
+    // command for previous move
+    private KeyStroke leftCommand = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA,KeyEvent.BUTTON1_DOWN_MASK);
 
     // The list of popup menu commands
     private KeyCommand[] commands;
-
 
     public DialMovementSelector() {
         this(null);
     }
 
     public DialMovementSelector(GamePiece piece) {
-
         setInner(piece);
         this.piece = piece;
     }
@@ -49,6 +52,7 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
 
     @Override
     protected KeyCommand[] myGetKeyCommands() {
+        // add the two commands to the menu
         if (commands == null) {
             commands = new KeyCommand[]{new KeyCommand("Right", rightCommand, this),new KeyCommand("Left", leftCommand, this) };
         }
@@ -63,29 +67,42 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
+        // handle the COMMA and PERIOD keystrokes
         if(stroke.getKeyCode() == leftCommand.getKeyCode() && stroke.getKeyEventType() == leftCommand.getKeyEventType())
         {
+            GamePiece dial = this.piece;
 
-            GamePiece dial = getInner();
-
+            // get the current layer (maneuver) from the dial
             String layer = (String)dial.getProperty("MoveLayer");
+
+            // get the comma separated list of valid maneuvers from the dial
             String validMoves = (String)dial.getProperty("ValidMoveLayers");
+
+            // figure out the previous valid maneuver
             String nextLayer = getPreviousLevel(validMoves,layer);
+
+            // set that maneuver on the dial
             getInner().setProperty("MoveLayer",nextLayer);
 
         }else if(stroke.getKeyCode() == rightCommand.getKeyCode() && stroke.getKeyEventType() == rightCommand.getKeyEventType())
         {
-
             GamePiece dial = this.piece;
+
+            // get the current layer (maneuver) from the dial
             String layer = (String)dial.getProperty("MoveLayer");
+
+            // get the comma separated list of valid maneuvers from the dial
             String validMoves = (String)dial.getProperty("ValidMoveLayers");
+
+            // figure out the next valid maneuver
             String previousLayer = getNextLevel(validMoves,layer);
+
+            // set that maneuver on the dial
             dial.setProperty("MoveLayer",previousLayer);
 
         }
 
         return piece.keyEvent(stroke);
-
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
@@ -125,77 +142,164 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
 
     private static HashMap<String,String> storedShipLayers = new HashMap<String,String>();
 
+    /**
+     * Gets the next level (maneuver) from the list of valid maneuvers
+     *
+     * @param maneuvers comma separated list of valid maneuver IDs
+     * @param currentLevel current maneuver ID
+     * @return Next maneuver ID (level)
+     */
     private static String getNextLevel(String maneuvers, String currentLevel)
     {
-        String[] moves = maneuvers.split(",");
         String nextLevel = null;
-        int previousIndex ;
+        int nextIndex ;
         int foundIndex = 0 ;
         boolean found = false;
+
+        // split the list of valid maneuver IDs into an array
+        String[] moves = maneuvers.split(",");
+
+        // loop through the valid maneuvers, looking for the current maneuver
         for(int i = 0; i< moves.length && !found;i++)
         {
             if(moves[i].equals(currentLevel))
             {
+                // we've found the manuever
+
+                // set the index of the maneuver
                 foundIndex = i;
                 found = true;
             }
         }
+
         if(found)
         {
-            previousIndex = foundIndex + 1;
-            if(previousIndex > (moves.length-1))
+            // find the next maneuver index
+            nextIndex = foundIndex + 1;
+
+            // if we've gone beyond the list of valid maneuvers, go back to the beginning of the list
+            if(nextIndex > (moves.length-1))
             {
-                previousIndex = 0;
+                nextIndex = 0;
             }
-            nextLevel = moves[previousIndex];
+
+            // get the ID of the next maneuver
+            nextLevel = moves[nextIndex];
         }
         return nextLevel;
     }
 
+    /**
+     * Gets the previous level (maneuver) from the list of valid maneuvers
+     *
+     * @param maneuvers comma separated list of valid maneuver IDs
+     * @param currentLevel current maneuver ID
+     * @return Previous maneuver ID (level)
+     */
     private static String getPreviousLevel(String maneuvers, String currentLevel)
     {
-        String[] moves = maneuvers.split(",");
         String previousLevel = null;
         int previousIndex;
         int foundIndex = 0;
         boolean found = false;
+
+        // split the list of valid maneuver IDs into an array
+        String[] moves = maneuvers.split(",");
+
+        // loop through the valid maneuvers, looking for the current maneuver
         for(int i = 0; i< moves.length && !found;i++)
         {
             if(moves[i].equals(currentLevel))
             {
+                // we've found the manuever
+
+                // set the index of the maneuver
                 foundIndex = i;
                 found = true;
             }
         }
+
         if(found)
         {
+            // find the previous maneuver index
             previousIndex = foundIndex - 1;
+
+            // if we've gone beyond the list of valid maneuvers, go back to the end of the list
             if(previousIndex < 0)
             {
                 previousIndex = moves.length-1;
             }
+
+            // get the ID of the previous maneuver
             previousLevel = moves[previousIndex];
         }
         return previousLevel;
     }
 
+    /**
+     * Gets the first maneuver from the list of valid maneuvers
+     *
+     * @param maneuvers comma separated list of valid maneuvers
+     * @return first maneuver id in the list
+     */
     public static String getFirstLevel(String maneuvers)
     {
-        // grab the first level from the string of comma separated lists
+        // split the comma separated list of maneuver IDs into an array
         String[] moves = maneuvers.split(",");
         return moves[0];
     }
 
+    /**
+     * Gets the maneuver ID (layer) for a given entry in the XWS "maneuvers" field
+     *
+     * manuevers in the XWS are a two dimensional array (X,Y), where:
+     * X = roughly the speed (0 = stop, 1 = 1 and -1, 2 = 2, etc)
+     * Y = the type of move
+     *    0 = 1 Turn Left
+     *    1 = Bank Left
+     *    2 = Straight
+     *    3 = Bank Right
+     *    4 = Turn Right
+     *    5 = K Turn
+     *    6 = Sloop Left
+     *    7 = Sloop Right
+     *    8 =  Tallon Roll Left
+     *    9 = Tallon Roll Right
+     *   10 = -1 Left
+     *   11 = -1 Straight
+     *   12 = -1 Right
+     * The value at the X,Y coordinate is the color of the move:
+     *    0 = Not a valid move
+     *    1 = white
+     *    2 = green
+     *    3 = red
+     *
+     * @param XWSSpeed Speed of the maneuver (X coordinate of the array)
+     * @param XWSMove   Move (Y coordinate of the array)
+     * @param XWSColor  Color (color of the move)
+     * @return the maneuver ID (layer) of the move
+     */
     private static Integer getLayer(int XWSSpeed, int XWSMove, int XWSColor)
     {
+        // if the data hasn't yet been loaded, load it
         if(moveLayers == null)
         {
             loadData();
         }
 
+        // The maneuver IDs are stored in a HashMap with the key being <speed>|<move>|<color>
         return moveLayers.get(XWSSpeed + "|" + XWSMove + "|" + XWSColor);
     }
 
+    /**
+     * Load the static maneuver data
+     *
+     * These maneuver IDs correspond to the layers in the dial layer showing the movement images.
+     * If a maneuver needs to be added or moved, you'll need to add/change it here AND in the dial layer of the
+     * 3 autogenerated dials.
+     *
+     * The maneuver ID (layer) also dictates the ORDER of the maneuvers as you cycle through them.
+     */
     private static void loadData()
     {
         moveLayers = new HashMap<String, Integer>();
@@ -318,31 +422,53 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
 
     }
 
-    // get an ordered comma separated list of layer #s that are valid for the given list of maneuvers
+    /**
+     * Get an ordered comma separated list of layer #s that are valid for the given list of maneuvers
+     *
+     * @param maneuvers content of the "maneuvers" attribute from the ship XWS
+     * @param shipXWSName XWS ship name
+     * @return comma separated list of valid maneuvers for this ship
+     */
     public static String getValidMoveLayers(int[][] maneuvers, String shipXWSName)
     {
         String returnString;
+
+        // check the local cache to see if we've already done the work for this ship
         if(storedShipLayers.get(shipXWSName) != null)
         {
+            // we've already done this ship, so just grab from the cache
             returnString = storedShipLayers.get(shipXWSName);
         }else {
+            // we haven't yet done this ship
+
+            // set up an array that mirrors the 115 possible moves, so we can keep track of which ones are valid for this ship
+            // all moves start out as INVALID
             boolean[] isValid = new boolean[115];
 
+            // loop through the maneuvers from the XWS
             for (int i = 0; i < maneuvers.length; i++) {
                 for (int j = 0; j < maneuvers[i].length; j++) {
                     if (maneuvers[i][j] != 0) {
                         // this is a valid move
                         // get the layer
                         Integer layer = getLayer(i, j, maneuvers[i][j]);
+                        // set it to valid
                         isValid[layer] = true;
                     }
                 }
             }
 
+            // now build the comma separated list of valid moves
             StringBuilder sb = new StringBuilder();
             int count = 0;
+
+            // loop through the valid array
             for (int i = 1; i < isValid.length; i++) {
+
+                // if it's a valid move, add the ID to the list
                 if (isValid[i]) {
+
+                    // if this isn't the first entry, we need to add a comma for separation
                     if (count != 0) {
                         sb.append(",");
                     }
@@ -352,18 +478,12 @@ public class DialMovementSelector extends Decorator implements EditablePiece {
                 }
             }
             returnString = sb.toString();
+
+            // store the list in a HashMap as a cache so we don't have to calculate this ship again this session
             storedShipLayers.put(shipXWSName,returnString);
         }
         return returnString;
     }
 
-/*    private static String getValidMoveLayers(String shipXWSName)
-    {
-        String returnString = null;
-        if(storedShipLayers.get(shipXWSName) != null) {
-            returnString = storedShipLayers.get(shipXWSName);
-        }
-        return returnString;
-    }*/
 
 }
