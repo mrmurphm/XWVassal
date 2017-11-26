@@ -7,7 +7,10 @@ import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
+import VASSAL.counters.Embellishment;
 import VASSAL.counters.GamePiece;
+import VASSAL.counters.PieceEditor;
+import VASSAL.counters.Restricted;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -327,6 +330,60 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             dial = mic.Util.newPiece(scumDialSlot);
         }
 
+   //     Embellishment emb = Embellishment.getLayerWithMatchingActivateCommand(dial, NamedKeyStroke.NULL_KEYSTROKE,true);
+        GamePiece outer = Restricted.getOutermost(dial);
+
+  //      Decorator dec = (Decorator) outer;
+    //    List names = dec.getPropertyNames();
+   //     Iterator i = names.iterator() ;
+   //     while(i.hasNext())
+    //    {
+     //       String name = (String)i.next();
+      //      logToChat(name);
+     //
+     //   }
+
+        Embellishment emb = (Embellishment) Restricted.getDecorator(outer,Embellishment.class);
+
+
+
+       // Restricted rest = (Restricted)dial;
+      //  GamePiece emb = Restricted.getDecorator(dial,Embellishment.class);
+
+       // Embellishment emb = (Embellishment) dial.getProperty("Move");
+        if(emb != null)
+        {
+            logToChat("NOT NULL");
+
+          //  logToChat(emb.getLayerName());
+            logToChat(emb.getClass().getName());
+            // WE HAVE AN EMBELLISHMENT!!!
+      //      Embellishment emb2 = (Embellishment)emb;
+            logToChat(emb.getName());
+            logToChat( emb.getLayerName());
+            logToChat( emb.myGetState());
+          //  Embellishment0 emb2 = new Embellishment0();
+
+            logToChat( emb.getState());
+            PieceEditor ed =  emb.getEditor();
+            logToChat(PieceEditor.class.getName());
+            
+          //  Decorator dec = emb2.getOuter();
+
+
+        //    Embellishment emb3 = (Embellishment) Restricted.getOuter(emb2,Embellishment.class);
+        //    logToChat(emb3.getClass().getName());
+        //    logToChat(emb3.getName());
+        //    logToChat( emb3.getLayerName());
+        }else{
+            logToChat("NULL");
+            logToChat(dial.getClass().getName());
+        }
+
+       // Embellishment emb = Embellishment0.getLayerWithMatchingActivateCommand(dial,null, true);
+       // logToChat(emb.getLayerName());
+        //Embellishment test = (Embellishment) dial;
+        //logToChat(test.getName());
         // set the XWS ship name, pilot name and craft ID on the dial
         dial.setProperty("ShipXwsId",ship.getShipData().getXws());
         dial.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
