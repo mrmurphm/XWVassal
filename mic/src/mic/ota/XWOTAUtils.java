@@ -125,6 +125,41 @@ public class XWOTAUtils {
 
 
     }
+/*
+    public static boolean checkForWriteAccess()
+    {
+        boolean canWrite = true;
+        FileArchive fileArchive = null;
+        try {
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            fileArchive = dataArchive.getArchive();
+            ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            //fileArchive.flush(); nope
+            //boolean closed = fileArchive.isClosed(); nop
+
+           // fileArchive.revert();
+            writer.addFile("ver.txt","test".getBytes());
+
+            writer.save();
+
+        }catch(Throwable t)
+        {
+
+            canWrite = false;
+        }
+
+        if(!canWrite) {
+            try {
+                fileArchive.revert();
+            } catch (Exception e) {
+                mic.Util.logToChat("Exception reverting fileArchive");
+            }
+        }
+
+        return canWrite;
+    }
+*/
 
 
     public static void buildDialMaskImages(String faction, String shipXWS, String dialHideImageName , String dialMaskImageName, ArchiveWriter writer)

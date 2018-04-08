@@ -140,9 +140,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
                 if(answer == JOptionPane.YES_OPTION)
                 {
-
-                    downloadAll();
-                    allButton.setSelected(false);
+                 //   if(XWOTAUtils.checkForWriteAccess()) {
+                        downloadAll();
+                        allButton.setSelected(false);
+                    //    mic.Util.logToChat("Can write to the vmod");
+                 //   }else{
+                  //      mic.Util.logToChat("Cannot write to the vmod");
+                 //   }
                 }else{
                     downloadButton.setEnabled(true);
                 }

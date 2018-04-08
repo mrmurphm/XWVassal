@@ -67,6 +67,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             mic.Util.logToChat("Core XWing data updated");
         }catch(IOException e)
         {
+           // mic.Util.logToChat("Exception Occurred trying to download/save json");
             errorOccurredOnXWingData = true;
         }
 
@@ -507,7 +508,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             if(answer==0) {
                 downloadContent();
             }else{
-                downloadXwingDataAndDispatcherJSONFiles();
+
+                    downloadXwingDataAndDispatcherJSONFiles();
+
             }
             /*
             JOptionPane optionPane = new JOptionPane();
