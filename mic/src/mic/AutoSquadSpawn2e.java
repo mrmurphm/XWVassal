@@ -870,7 +870,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
-        String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
+
+        StringBuilder outputSB = new StringBuilder();
+        outputSB.append("{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{");
+        //String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
 
         List<ReadShipInfo> stuffToXWS = Lists.newArrayList();
 
@@ -957,33 +960,70 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             stuffToXWS.add(currentShip);
         }
 
+        StringBuilder pilotStringSB;
+        StringBuilder xws2StringSB;
+        StringBuilder upgradeTypeStringSB;
+
+
         for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
             //String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
-            String pilotString = "\"name\":\"" + Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName()) + "\",";
-            String xws2String = "\"id\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
-            String upgradesStartString = "\"upgrades\":{";
-            output+= pilotString + xws2String + upgradesStartString;
+
+            pilotStringSB = new StringBuilder();
+            xws2StringSB = new StringBuilder();
+            pilotStringSB.append("\"name\":\"").append(Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName())).append("\",");
+            //String pilotString = "\"name\":\"" + Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName()) + "\",";
+            xws2StringSB.append("\"id\":\"").append(stuffToXWS.get(i).getShipPilotXWS2()).append("\",");
+            //String xws2String = "\"id\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
+
+            outputSB.append(pilotStringSB).append(xws2StringSB).append("\"upgrades\":{");
+            //String upgradesStartString = "\"upgrades\":{";
+            //output+= pilotString + xws2String + upgradesStartString;
 
             for(int j=0; j<stuffToXWS.get(i).getUpgradeBins().size(); j++) //parse all upgrade types
             {
-                String upgradeTypeString = "\""+ stuffToXWS.get(i).getUpgradeBins().get(j).getType() +"\":[";
-                output += upgradeTypeString;
-                for(int k=0; k<stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size(); k++){ // parse upgrades within a type
-                    String upgradeString = "\""+stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().get(k)+"\"";
-                    output+=upgradeString;
-                    if(k!=stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size()-1) output+=","; //not the last upgrade in an upg type
-                }
-                output+="]"; //marks the end of an upgrade type
-                if(j!=stuffToXWS.get(i).getUpgradeBins().size()-1) output+=","; //not the last upgrade type in the upgrades
-            }
-            String upgradesEndString = "}"; //marks the end of upgrades
-            output += upgradesEndString;
-            output += "}"; //marks the end of a ship/pilot entry
-            if(i!=stuffToXWS.size()-1) output+= ",{"; //not the last ship/pilot entry
-        }
-        output+="],\"vendor\":{\"yasb\":{\"builder\":\"Internal Vassal Squad Builder\",\"builder_url\":\"none\",\"link\":\"none\"}},\"version\":\"2.0.0\"}";
+                upgradeTypeStringSB = new StringBuilder();
+                upgradeTypeStringSB.append("\"").append(stuffToXWS.get(i).getUpgradeBins().get(j).getType()).append("\":[");
 
-        entryArea.setText(output);
+                //String upgradeTypeString = "\""+ stuffToXWS.get(i).getUpgradeBins().get(j).getType() +"\":[";
+                outputSB.append(upgradeTypeStringSB);
+                //output += upgradeTypeString;
+                for(int k=0; k<stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size(); k++){ // parse upgrades within a type
+
+                    outputSB.append("\"").append(stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().get(k)).append("\"");
+                   // String upgradeString = "\""+stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().get(k)+"\"";
+                    //output+=upgradeString;
+                    if(k!=stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size()-1)
+                    {
+                        outputSB.append(",");
+                        //output+=","; //not the last upgrade in an upg type
+                    }
+                }
+                outputSB.append("]");
+                //output+="]"; //marks the end of an upgrade type
+                if(j!=stuffToXWS.get(i).getUpgradeBins().size()-1)
+                {
+                    outputSB.append(",");
+                    //output+=","; //not the last upgrade type in the upgrades
+                }
+            }
+
+            outputSB.append("}");
+          //  String upgradesEndString = "}"; //marks the end of upgrades
+          //  output += upgradesEndString;
+
+            outputSB.append("}");
+           // output += "}"; //marks the end of a ship/pilot entry
+            if(i!=stuffToXWS.size()-1)
+            {
+                outputSB.append(",{");
+                //output+= ",{"; //not the last ship/pilot entry
+            }
+        }
+        outputSB.append("],\"vendor\":{\"yasb\":{\"builder\":\"Internal Vassal Squad Builder\",\"builder_url\":\"none\",\"link\":\"none\"}},\"version\":\"2.0.0\"}");
+        //output+="],\"vendor\":{\"yasb\":{\"builder\":\"Internal Vassal Squad Builder\",\"builder_url\":\"none\",\"link\":\"none\"}},\"version\":\"2.0.0\"}";
+
+        entryArea.setText(outputSB.toString());
+        //entryArea.setText(output);
     }
 
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)

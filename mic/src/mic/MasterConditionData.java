@@ -51,12 +51,15 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
                     MasterConditionData.ConditionData xwingDataCondition = loadedData.get(dispatcherCondition.getXws());
 
                     // If there is no dispatcher version of this condition, store the xwing-data version
+                    /*
                     if(dispatcherCondition == null)
                     {
                         loadedData.put(xwingDataCondition.getXws(), xwingDataCondition);
 
                         // if there is no xwing-data version of this condition, store the dispatcher version
                     }else if(xwingDataCondition == null)
+                    */
+                    if(xwingDataCondition == null)
                     {
                         loadedData.put(dispatcherCondition.getXws(), dispatcherCondition);
                         // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence

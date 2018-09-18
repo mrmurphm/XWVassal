@@ -3,6 +3,8 @@ package mic.ota;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondition>
 {
-
+    private static final Logger logger = LoggerFactory.getLogger(OTAMasterConditions.class);
  //   private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/condition_images.json";
 
     private static Map<String, OTAMasterConditions.OTACondition> loadedData = null;
@@ -21,17 +23,18 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
     }
     public Collection<OTAMasterConditions.OTACondition> getAllConditions(int edition)
     {
+        mic.LoggerUtil.logEntry(logger,"getAllConditions");
         if(loadedData == null)
         {
             loadData(edition);
         }
-
+        mic.LoggerUtil.logExit(logger,"getAllConditions");
         return loadedData.values();
 
     }
 
     private static void loadData(int edition) {
-
+        mic.LoggerUtil.logEntry(logger,"loadData");
         // load from
         OTAMasterConditions data = new OTAMasterConditions();
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_CONDITIONS_JSON_URL, OTAMasterConditions.class);
@@ -48,7 +51,7 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
                 loadedData.put(condition.getImage(), condition);
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
     public static class OTACondition {
@@ -124,5 +127,6 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
         public void setTokenStatusOTA(boolean tokenStatusOTA) {
             this.statusTokenOTA = tokenStatusOTA;
         }
+
     }
 }

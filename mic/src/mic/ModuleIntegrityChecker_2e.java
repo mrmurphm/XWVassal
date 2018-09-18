@@ -2,6 +2,8 @@ package mic;
 
 
 import mic.ota.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,10 +19,13 @@ import java.util.List;
  */
 
 public class ModuleIntegrityChecker_2e {
+    private static final Logger logger = LoggerFactory.getLogger(ModuleIntegrityChecker_2e.class);
+
     public String testString = "";
 
     public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades(boolean onlyDetectOne, XWS2Upgrades allUpgrades)
     {
+        mic.LoggerUtil.logEntry(logger,"checkUpgrades");
         // get list of upgrades from OTAMasterUpgrades
         OTAMasterUpgrades omu = new OTAMasterUpgrades();
         omu.flushData();
@@ -53,11 +58,13 @@ public class ModuleIntegrityChecker_2e {
                 }
             }
         }
+        mic.LoggerUtil.logExit(logger,"checkUpgrades");
         return upgradeList;
     }
 
     public ArrayList<OTAMasterConditions.OTACondition> checkConditions(boolean onlyDetectOne, List<XWS2Upgrades.Condition> allConditions)
     {
+        mic.LoggerUtil.logEntry(logger,"checkConditions");
         // get list of conditions from OTAMasterUpgrades
         OTAMasterConditions omc = new OTAMasterConditions();
         omc.flushData();
@@ -106,13 +113,13 @@ public class ModuleIntegrityChecker_2e {
                 }
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"checkConditions");
         return conditionList;
     }
-
+/*
     public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides(boolean onlyDetectOne)
     {
-
+        mic.LoggerUtil.logEntry(logger,"checkDialHides");
         OTAMasterDialHides omdh = new OTAMasterDialHides();
         omdh.flushData();
         Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
@@ -140,10 +147,10 @@ public class ModuleIntegrityChecker_2e {
 
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"checkDialHides");
         return dialHideList;
     }
-
+*/
 /*
     public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
@@ -191,6 +198,7 @@ public class ModuleIntegrityChecker_2e {
 
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
 {
+    mic.LoggerUtil.logEntry(logger,"checkPilots");
     // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     omp.flushData();
@@ -220,11 +228,13 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
             }
         }
     }
+    mic.LoggerUtil.logExit(logger,"checkPilots");
     return pilotListToReturn;
 }
 
 public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
+        mic.LoggerUtil.logEntry(logger,"checkShips");
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
@@ -255,11 +265,13 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
                 }
             }
         }
+        mic.LoggerUtil.logExit(logger,"checkShips");
         return shipList;
     }
 
 public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
+        mic.LoggerUtil.logEntry(logger,"checkShipBases");
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(2);
@@ -306,11 +318,13 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
                 }
             }
         }
+        mic.LoggerUtil.logExit(logger,"checkShipBases");
         return shipList;
     }
-
+/*
     public ArrayList<OTADialMask> checkDialMasks(boolean onlyDetectOne)
     {
+        mic.LoggerUtil.logEntry(logger,"checkDialMasks");
         OTAMasterDialHides omdh = new OTAMasterDialHides();
         omdh.flushData();
         Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
@@ -359,14 +373,15 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
 
 
         }
-
+        mic.LoggerUtil.logExit(logger,"checkDialMasks");
         return dialMaskList;
 
     }
-
+*/
+/*
     public ArrayList<OTAMasterActions.OTAAction> checkActions(boolean onlyDetectOne)
     {
-
+        mic.LoggerUtil.logEntry(logger,"checkActions");
         boolean addToList = false;
         // get list of Actions from OTAMasterActions
         OTAMasterActions oma = new OTAMasterActions();
@@ -391,20 +406,22 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
         }
 
 
-
+        mic.LoggerUtil.logExit(logger,"checkActions");
         return actionList;
     }
-
+*/
+/*
     public void checkAll(){
-
+        mic.LoggerUtil.logEntry(logger,"checkAll");
         MasterPilotData mpd = new MasterPilotData();
         mpd.loadData();
 
         for(MasterPilotData.PilotData pd : mpd){
             testString+=pd.getFaction();
         }
+        mic.LoggerUtil.logExit(logger,"checkAll");
     }
-
+*/
     public String getTestString(){
         return testString;
     }

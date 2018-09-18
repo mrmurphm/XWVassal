@@ -48,12 +48,15 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
                     UpgradeData xwingDataUpgrade = loadedData.get(dispatcherUpgrade.getXws());
 
                     // If there is no dispatcher version of this upgrade, store the xwing-data version
+                    /*
                     if(dispatcherUpgrade == null)
                     {
                         loadedData.put(xwingDataUpgrade.getXws(), xwingDataUpgrade);
 
                         // if there is no xwing-data version of this upgrade, store the dispatcher version
                     }else if(xwingDataUpgrade == null)
+                    */
+                    if(xwingDataUpgrade == null)
                     {
                         loadedData.put(dispatcherUpgrade.getXws(), dispatcherUpgrade);
                         // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -89,12 +92,15 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
                     UpgradeData xwingDataUpgrade = loadedData.get(dispatcherUpgrade.getXws());
 
                     // If there is no dispatcher version of this upgrade, store the xwing-data version
+                    /*
                     if(dispatcherUpgrade == null)
                     {
                         loadedData.put(xwingDataUpgrade.getXws(), xwingDataUpgrade);
 
                         // if there is no xwing-data version of this upgrade, store the dispatcher version
                     }else if(xwingDataUpgrade == null)
+                    */
+                    if(xwingDataUpgrade == null)
                     {
                         loadedData.put(dispatcherUpgrade.getXws(), dispatcherUpgrade);
                         // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -187,19 +193,20 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             }
         }
     }
+    /*
     private static void loadFromXwingData(String altXwingDataString)
     {
         //DELETEME
-        Util.logToChat("XWINGDATA loading from "+altXwingDataString+ "upgrades.json");
+        //Util.logToChat("XWINGDATA loading from "+altXwingDataString+ "upgrades.json");
 
 
         MasterUpgradeData data = Util.loadRemoteJson(altXwingDataString + "upgrades.json", MasterUpgradeData.class);
 
         //DELETEME
-        for(UpgradeData data2 : data)
-        {
-            Util.logToChat(data2.getXws());
-        }
+       // for(UpgradeData data2 : data)
+       // {
+       //     Util.logToChat(data2.getXws());
+       // }
 
 
         if (data == null) {
@@ -220,7 +227,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             }
         }
     }
-
+*/
     private static MasterUpgradeData loadFromDispatcher()
     {
         // load from dispatch

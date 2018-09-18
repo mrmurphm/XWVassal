@@ -12,9 +12,9 @@ import java.util.*;
  */
 public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
-    public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
+    public final static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
   //  public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_ships.json";
-    public static Map<String, ShipData> loadedData = null;
+    private static Map<String, ShipData> loadedData = null;
 
     public Object[] getAllShips()
     {
@@ -67,12 +67,15 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             {
                 ShipData xwingDataShip = loadedData.get(dispatcherShip.getXws());
                 // If there is no dispatcher version of this ship, store the xwing-data version
+                /*
                 if(dispatcherShip == null)
                 {
                     loadedData.put(xwingDataShip.getXws(), xwingDataShip);
 
                 // if there is no xwing-data version of this ship, store the dispatcher version
                 }else if(xwingDataShip == null)
+                */
+                if(xwingDataShip == null)
                 {
                     loadedData.put(dispatcherShip.getXws(), dispatcherShip);
                 // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -100,12 +103,15 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             {
                 ShipData xwingDataShip = loadedData.get(dispatcherShip.getXws());
                 // If there is no dispatcher version of this ship, store the xwing-data version
+                /*
                 if(dispatcherShip == null)
                 {
                     loadedData.put(xwingDataShip.getXws(), xwingDataShip);
 
                     // if there is no xwing-data version of this ship, store the dispatcher version
                 }else if(xwingDataShip == null)
+                */
+                if(xwingDataShip == null)
                 {
                     loadedData.put(dispatcherShip.getXws(), dispatcherShip);
                     // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -178,6 +184,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             loadedData.put(ship.getXws(), ship);
         }
     }
+    /*
     private static void loadFromXwingData(String altXwingDataURL)
     {
         // load from xwing-data
@@ -192,7 +199,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             loadedData.put(ship.getXws(), ship);
         }
     }
-
+*/
     private static MasterShipData loadFromDispatcher()
     {
         // load from dispatch

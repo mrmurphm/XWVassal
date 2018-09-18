@@ -19,6 +19,7 @@ import static mic.Util.logToChat;
  */
 public class VassalXWSPilotPieces {
 
+    /*
     private static Map<String, String> actionLayers = ImmutableMap.<String, String>builder()
             .put("","1")
             .put("Focus","2")
@@ -32,7 +33,7 @@ public class VassalXWSPilotPieces {
             .put("Reinforce","10")
             .put("Reload","11")
             .build();
-
+*/
 
 
     private static Map<String, String> cardboardFiringArcPrototypes = ImmutableMap.<String, String>builder()

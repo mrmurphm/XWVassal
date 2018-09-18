@@ -218,6 +218,7 @@ public class XWOTAUtils {
 
     }
 
+    /*
     private static String determineAltShipBaseNameFromImage(String faction, String shipImageName){
         mic.LoggerUtil.logEntry(logger,"determineAltShipBaseNameFromImage");
         String coreName = shipImageName.replace("Ship_","").replace(".png","");
@@ -225,7 +226,7 @@ public class XWOTAUtils {
         mic.LoggerUtil.logExit(logger,"determineAltShipBaseNameFromImage");
         return returnName;
     }
-
+*/
 
     private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer, int edition)
     {
@@ -299,6 +300,7 @@ public class XWOTAUtils {
         mic.LoggerUtil.logExit(logger,"saveDialMaskImageToModule");
     }
 
+    /*
     private static void saveBaseShipImageToModule(String faction, String shipXWS, BufferedImage baseImage, String targetBaseImageName)
     {
         mic.LoggerUtil.logEntry(logger,"saveBaseShipImageToModule");
@@ -335,6 +337,7 @@ public class XWOTAUtils {
         }
         mic.LoggerUtil.logExit(logger,"saveBaseShipImageToModule");
     }
+    */
 
     private static BufferedImage buildShipBase2e(String size, DataArchive dataArchive) throws IOException
     {
@@ -412,7 +415,7 @@ public class XWOTAUtils {
         mic.LoggerUtil.logExit(logger,"addArcsToBaseShipImage");
         return baseImage;
     }
-
+/*
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
         mic.LoggerUtil.logEntry(logger,"addShipToBaseShipImage");
@@ -432,7 +435,7 @@ public class XWOTAUtils {
         return baseImage;
 
     }
-
+*/
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
         mic.LoggerUtil.logEntry(logger,"addShipToBaseShipImage");
@@ -619,6 +622,7 @@ public class XWOTAUtils {
         mic.LoggerUtil.logExit(logger,"writer.save");
         mic.LoggerUtil.logExit(logger,"downloadJSONFilesFromGitHub");
     }
+    /*
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
         mic.LoggerUtil.logEntry(logger,"downloadAndSaveImagesFromOTA");
@@ -673,7 +677,7 @@ public class XWOTAUtils {
         }
         mic.LoggerUtil.logExit(logger,"downloadAndSaveImagesFromOTA");
     }
-
+*/
     public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer, String branchURL)
     {
         mic.LoggerUtil.logEntry(logger,"downloadImagesFromOTA");
@@ -715,7 +719,7 @@ public class XWOTAUtils {
         }
         mic.LoggerUtil.logExit(logger,"downloadImagesFromOTA");
     }
-
+/*
     public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames, String branchURL)
     {
         mic.LoggerUtil.logEntry(logger,"downloadAndSaveImagesFromOTA");
@@ -769,7 +773,7 @@ public class XWOTAUtils {
         }
         mic.LoggerUtil.logExit(logger,"downloadAndSaveImagesFromOTA");
     }
-
+*/
 
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName, String branchURL)
     {
@@ -821,9 +825,9 @@ public class XWOTAUtils {
         while ((n = is.read(byteChunk)) > 0) {
             baos.write(byteChunk, 0, n);
         }
-        if (is != null) {
+   //     if (is != null) {
             is.close();
-        }
+   //     }
         byte[] bytes = baos.toByteArray();
         baos.close();
         mic.LoggerUtil.logExit(logger,"downlodFileFromOTA");
@@ -850,9 +854,9 @@ public class XWOTAUtils {
         while ((n = is.read(byteChunk)) > 0) {
             baos.write(byteChunk, 0, n);
         }
-        if (is != null) {
+     //   if (is != null) {
             is.close();
-        }
+    //    }
         byte[] bytes = baos.toByteArray();
         baos.close();
         mic.LoggerUtil.logExit(logger,"downlodFileFromOTA");

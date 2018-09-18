@@ -16,7 +16,7 @@ public class AltArtShipPicker {
 
     private static final String[] UWING_ART = {"attack","landing"};
 
-    private static Map<String,String> newPilotAltArts = ImmutableMap.<String, String>builder()
+    private static final Map<String,String> newPilotAltArts = ImmutableMap.<String, String>builder()
             .put("prototypepilot","blue")
             .put("greensquadronpilot","green")
             .put("bluesquadronpilot","blue")
@@ -53,7 +53,7 @@ public class AltArtShipPicker {
             .put("ndrusuhlak","ndru")
             .put("talasquadronpilot","tala").build();
 
-    private static Map<String,String> defaultShipArts = ImmutableMap.<String, String>builder()
+    private static final Map<String,String> defaultShipArts = ImmutableMap.<String, String>builder()
             .put("rebelalliance_awing","red")
             .put("rebelalliance_tiefighter","sabinestie")
             .put("rebelalliance_ywing","gold")
@@ -66,7 +66,7 @@ public class AltArtShipPicker {
 
 
 
-    private static Map<String, String> pilotAltArts = ImmutableMap.<String, String>builder()
+    private static final Map<String, String> pilotAltArts = ImmutableMap.<String, String>builder()
             .put("greensquadronpilot", "Green Squadron")
             .put("prototypepilot", "Prototype")
             .put("bluesquadronpilot", "B-Wing Blue")

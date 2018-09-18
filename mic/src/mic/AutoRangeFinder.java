@@ -41,7 +41,7 @@ import static mic.Util.serializeToBase64;
 class FluidAnim extends TimerTask {
 
     AutoRangeFinder myARF;
-Integer savedOption = 0;
+    Integer savedOption = 0;
     int tictoc = 0;
 
     FluidAnim ( AutoRangeFinder ARF, int whichOption )
@@ -130,15 +130,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
         this.fov = new FOVisualization();
-       // launch();
+        // launch();
         map = VASSAL.build.module.Map.getMapById("Map0");
         map.getView().addMouseMotionListener(this);
 
     }
 
     protected void launch() {
-            map.pushMouseListener(this);
-            anchor.move(0, 0);
+        map.pushMouseListener(this);
+        anchor.move(0, 0);
     }
 
     @Override
@@ -542,7 +542,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 }
                 else found.isObstructed = false;
 
-                
+
                 double extra = getExtraAngleDuringRectDetection(thisShip, b);
                 ShapeWithText bestBand = new ShapeWithText(new Path2D.Double(a1), thisShip.getAngleInRadians() + extra);
                 if(found.isObstructed == true) {
@@ -550,7 +550,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                     bestBand.rangeString += " obstructed";
                 }
                 rfindings.add(found);
-                fov.addShapeWithText(bestBand); 
+                fov.addShapeWithText(bestBand);
             }
 
             //TO DO:
@@ -767,7 +767,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         }
         if(passesCase2 == false) return true; //the same obstacle blocked the whole width of the rectangle, obstruction found
 
-            //case 3, gotta ray cast from edge 1 to edge 2 and check all those lines. Assume it's false until you find a solid passthrough line
+        //case 3, gotta ray cast from edge 1 to edge 2 and check all those lines. Assume it's false until you find a solid passthrough line
         Boolean passesCase3 = false;
         int count = (int)thisShip.chassis.getWidth();
         for (int i = 0; i < count; i++) {
@@ -789,7 +789,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             if(passesCase3==true) return false; //found a way despite checking all rocks? then you have a non-obstructed shot
         }
 
-         //no passthrough found, so it's blocked
+        //no passthrough found, so it's blocked
         for(BumpableWithShape obstruction : obstructionsFound) fov.shapes.add(obstruction.shape);
         return true;
 
@@ -1147,7 +1147,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 }
                 break;
         }
-        
+
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
@@ -1715,19 +1715,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             E3B = thisShip.tPts.get(17);
         }
         else if(whichOption == mobileSideArcOption && twoPointOh == false){
-                //left side check
-                A1 = thisShip.tPts.get(5);
-                A2 = thisShip.tPts.get(0);
+            //left side check
+            A1 = thisShip.tPts.get(5);
+            A2 = thisShip.tPts.get(0);
 
-                E1 = thisShip.tPts.get(7);
-                E2 = thisShip.tPts.get(2);
+            E1 = thisShip.tPts.get(7);
+            E2 = thisShip.tPts.get(2);
 
-                //right side check
-                A3 = thisShip.tPts.get(1);
-                A4 = thisShip.tPts.get(4);
+            //right side check
+            A3 = thisShip.tPts.get(1);
+            A4 = thisShip.tPts.get(4);
 
-                E3 = thisShip.tPts.get(3);
-                E4 = thisShip.tPts.get(6);
+            E3 = thisShip.tPts.get(3);
+            E4 = thisShip.tPts.get(6);
         }else if(whichOption == mobileSideArcOption && twoPointOh == true){
             //left side check
             A1 = thisShip.tPts.get(5);
@@ -1926,7 +1926,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
         //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
-       if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
     }
@@ -2090,7 +2090,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
         double qx = DD.first.x;
         double qy = DD.first.y;
-        
+
         double rx = A1E1.second.x - A1E1.first.x;
         double ry = A1E1.second.y - A1E1.first.y;
 
@@ -2839,8 +2839,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-        //    if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
-            if (piece.getState().contains("this_is_a_ship") && !piece.getId().equals(this.piece.getId())) {
+            if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
                         piece.getState().contains("this_is_2pointoh")));
@@ -2856,10 +2855,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     public void mousePressed(MouseEvent e) {
         if(DEBUGMODE == false) return;
         Point p = e.getPoint();
-            anchor = p;
-            anchorLocation = map.localizedLocationName(anchor);
-            lastLocation = anchorLocation;
-        }
+        anchor = p;
+        anchorLocation = map.localizedLocationName(anchor);
+        lastLocation = anchorLocation;
+    }
 
 
     public void mouseReleased(MouseEvent e) {
@@ -3013,7 +3012,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                     graphics2D.setColor(gradiant);
                 }
                 if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(arcLineColor);
-                  /*end*/
+                /*end*/
 
 
                 Line2D.Double lineShape = new Line2D.Double(line.first, line.second);

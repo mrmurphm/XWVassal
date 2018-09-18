@@ -32,10 +32,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.logToChat;
 public class OTAContentsChecker extends AbstractConfigurable {
+
     private static final Logger logger = LoggerFactory.getLogger(OTAContentsChecker.class);
-    MasterGameModeRouter mgmr = new MasterGameModeRouter();
-    static final int NBFLASHES = 60000;
-    static final int DELAYBETWEENFLASHES = 700;
+    private MasterGameModeRouter mgmr = new MasterGameModeRouter();
+    private static final int NBFLASHES = 60000;
+    private static final int DELAYBETWEENFLASHES = 700;
 
     // change this variable to a branch name to test, or master for deployment
     private static final String OTA_RAW_GITHUB_BRANCH = "master";
@@ -50,34 +51,34 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private static final String OTA_RAW_GITHUB_JSON_URL = OTA_RAW_BRANCH_URL + "json/";
     private static final String OTA_RAW_GITHUB_JSON_URL_2E = OTA_RAW_BRANCH_URL_2E + "json/";
 
-    public static final String OTA_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "upgrade_images.json";
-    public static final String OTA_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "ship_images.json";
-    public static final String OTA_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "pilot_images.json";
-    public static final String OTA_DIALHIDES_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "dial_images.json";
-    public static final String OTA_CONDITIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "condition_images.json";
-    public static final String OTA_ACTIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "action_images.json";
+    protected static final String OTA_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "upgrade_images.json";
+    protected static final String OTA_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "ship_images.json";
+    protected static final String OTA_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "pilot_images.json";
+    protected static final String OTA_DIALHIDES_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "dial_images.json";
+    protected static final String OTA_CONDITIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "condition_images.json";
+    protected static final String OTA_ACTIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "action_images.json";
 
-    public static final String OTA_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "upgrade_images.json";
+    protected static final String OTA_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "upgrade_images.json";
     public static final String OTA_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "ship_images.json";
-    public static final String OTA_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "pilot_images.json";
-    public static final String OTA_CONDITIONS_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "condition_images.json";
+    protected static final String OTA_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "pilot_images.json";
+    protected static final String OTA_CONDITIONS_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "condition_images.json";
 
 
     public static final String OTA_DISPATCHER_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_upgrades.json";
-    public static final String OTA_DISPATCHER_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_pilots.json";
+    private static final String OTA_DISPATCHER_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_pilots.json";
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_conditions.json";
 
 
-    public static final String OTA_DISPATCHER_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_upgrades.json";
-    public static final String OTA_DISPATCHER_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_pilots.json";
+    private static final String OTA_DISPATCHER_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_upgrades.json";
+    private static final String OTA_DISPATCHER_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_pilots.json";
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_ships.json";
-    public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
+    private static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
 
-    String aComboBoxChoice = "Base Game";
-    String chosenURL = OTA_RAW_BRANCH_URL;
+    private static final String aComboBoxChoice = "Base Game";
+    private String chosenURL = OTA_RAW_BRANCH_URL;
 
-    private static Map<String,String> fullFactionNames = ImmutableMap.<String, String>builder()
+    private static final Map<String,String> fullFactionNames = ImmutableMap.<String, String>builder()
             .put("galacticempire","Galactic Empire")
             .put("firstorder","First Order")
             .put("rebelalliance","Rebel Alliance")
@@ -92,28 +93,28 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private ModuleIntegrityChecker_2e modIntChecker_2e = null;
     private OTAContentsCheckerResults results = null;
     private OTAContentsCheckerResults results2e = null;
-    private final String[] finalColumnNames = {"Type","Name", "Variant"};
+    private static final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
     private JButton downloadButton;
     private JButton downloadButton2e;
     private JFrame frame;
     private JLabel jlabel;
     private boolean downloadAll = false;
-    JTabbedPane myTabbedPane = new JTabbedPane();
-    int missing1stEdContent = 0;
-    int missing2ndEdContent = 0;
-    boolean wantToBeNotified1st = false;
+    private JTabbedPane myTabbedPane = new JTabbedPane();
+    private int missing1stEdContent = 0;
+    private int missing2ndEdContent = 0;
+    private boolean wantToBeNotified1st = false;
 
     private boolean tictoc = false;
     private boolean tictoc1st = false;
     private boolean tictoc2nd = false;
-    Color backupColor = Color.WHITE;
-    Boolean killItIfYouHaveTo = false; //kills the blinking Contents Checker button, after an update
-    Boolean stopBlink1stTab = false;
-    Boolean stopBlink2ndTab = false;
-    Boolean killItIfYouHaveTo1stTab = false; //kills the blinking "First Edition tab", after an update
-    Boolean killItIfYouHaveTo2ndTab = false; //kills the blinking "Second Edition tab" after an update
-    public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
+    private Color backupColor = Color.WHITE;
+    private Boolean killItIfYouHaveTo = false; //kills the blinking Contents Checker button, after an update
+    private Boolean stopBlink1stTab = false;
+    private Boolean stopBlink2ndTab = false;
+    private Boolean killItIfYouHaveTo1stTab = false; //kills the blinking "First Edition tab", after an update
+    private Boolean killItIfYouHaveTo2ndTab = false; //kills the blinking "Second Edition tab" after an update
+    public  static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
     //for 2nd edition, keep a global variable
     static List<XWS2Pilots> allShips;
@@ -247,10 +248,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         mic.LoggerUtil.logExit(logger,"activateBlinky1stTab");
     }
     public void addTo(Buildable parent) {
-
-
-
-
         mic.LoggerUtil.logEntry(logger,"addTo");
         JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
@@ -280,22 +277,21 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("want1stednotifs.txt'");
                 if (inputStream == null) {
                     logToChat("couldn't load /want1stednotifs.txt");
-                }
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder contents = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    contents.append(line);
-                }
-                reader.close();
+                }else {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder contents = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        contents.append(line);
+                    }
+                    reader.close();
 
-                wantNotifStr = contents.toString();
-                if (wantNotifStr.equalsIgnoreCase("yes")) {
-                    wantToBeNotified1st = true;
+                    wantNotifStr = contents.toString();
+                    if (wantNotifStr.equalsIgnoreCase("yes")) {
+                        wantToBeNotified1st = true;
+                    } else wantToBeNotified1st = false;
+                    inputStream.close();
                 }
-                else wantToBeNotified1st = false;
-                inputStream.close();
-
             } catch (Exception e) {
                 System.out.println("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
                 logToChat("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
@@ -761,7 +757,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
 
         final JComboBox aComboBox = new JComboBox();
-        mgmr.loadData();
+        MasterGameModeRouter.loadData();
         if(mgmr!=null)
         {
             for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){

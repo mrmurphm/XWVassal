@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class VassalXWSPieceLoader {
     private static final String STEM_UPGRADE_SLOT_NAME = "Stem Upgrade";
+    /*
     private static Map<String, String> stemUpgradeSlotNames = ImmutableMap.<String, String>builder()
             .put("turret","Stem Upgrade Turret")
             .put("torpedo","Stem Upgrade Torpedo")
@@ -32,7 +33,7 @@ public class VassalXWSPieceLoader {
             .put("tech","Stem Upgrade Tech")
             .put("title","Stem Upgrade Title")
             .build();
-
+*/
     private static List<String> obstacleTabNames = Lists.newArrayList(
             "Asteroids", "TFA_Asteroids", "Debris"
     );

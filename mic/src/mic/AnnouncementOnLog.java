@@ -30,26 +30,25 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementOnLog.class);
 
     // debug flag - setting this to false skips the onLoad download of OTA
-    private static final boolean DEBUG_DO_DOWNLOAD = true;
+//    private static final boolean DEBUG_DO_DOWNLOAD = true;
 
-    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/VassalNews";
-    private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentVersion";
-    private static String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentBlog";
-    private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
-    private static String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
-    private static String guideURL = "http://xwvassal.info/guide";
+    private static final String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/VassalNews";
+    private static final String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentVersion";
+    private static final String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentBlog";
+    private static final String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
+    private static final String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
+    private static final String guideURL = "http://xwvassal.info/guide";
 
-    private JFrame updateCheckFrame;
+//    private JFrame updateCheckFrame;
 
-    private static boolean checkComplete = false;
-
+ //   private static boolean checkComplete = false;
+/*
     private synchronized void AnnouncementOnLog() {
 
     }
-
+*/
     public void addTo(Buildable parent)
     {
-
         mic.LoggerUtil.logEntry(logger,"addTo");
 
         openAnnouncementWindow();
@@ -62,7 +61,6 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         mic.LoggerUtil.logEntry(logger,"openAnnouncementWindow");
 
         checkForUpdate();
-
 
         try {
 
@@ -91,8 +89,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private void checkForUpdate() {
         mic.LoggerUtil.logEntry(logger,"checkForUpdate");
         String userVersion = GameModule.getGameModule().getGameVersion();
-        String msg ="";
-        Boolean isGreater = false;
+        StringBuilder msgSB = new StringBuilder();
+        boolean isGreater = false;
         try {
             mic.LoggerUtil.logEntry(logger,"checkForUpdate - readCurrentVersionURL");
             URL url = new URL(currentVersionURL);
@@ -114,7 +112,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 int onlinePart = i < onlineParts.length ?
                         Integer.parseInt(onlineParts[i]) : 0;
                 //logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
-                if(onlinePart > userPart) {
+                if(onlinePart > userPart)
+                {
                     isGreater = true;
                     break;
                 } else if(userPart > onlinePart) break;
@@ -132,8 +131,13 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             mic.LoggerUtil.logExit(logger,"checkForUpdate - readBlogURL");
 
             mic.LoggerUtil.logEntry(logger,"checkForUpdate - buildScreen");
-            if(isGreater == true) msg += "A new version is available!";
-            else msg += "You have the latest version.";
+            if(isGreater)
+            {
+                msgSB.append("A new version is available!");
+            } else
+            {
+                msgSB.append("You have the latest version.");
+            }
 /*
                 msg += "You currently have version " + userVersion + " of the X-Wing Vassal module.<br>"
                     + "The latest version available for download is " + line + "<br><br>"
@@ -144,7 +148,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 */
             JLabel versionLabel = new JLabel("You currently have version " + userVersion + " of the X-Wing Vassal module.");
             versionLabel.setFont(new Font("Serif", Font.PLAIN, 20));
-            JLabel versionLabel2 = new JLabel(msg);
+            JLabel versionLabel2 = new JLabel(msgSB.toString());
             JLabel versionLabel3 = new JLabel("The latest version available for download is " + line);
             JLabel checkLabel = new JLabel("The module is about to check for additional content.");
             JLabel checkLabel2 = new JLabel("The Content Checker button will flash black if it finds any.");
@@ -189,9 +193,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             homeLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
             JLabel homeIcon = new JLabel();
 
-            BufferedImage img = null;
+           // BufferedImage img;
             InputStream is = dataArchive.getInputStream("images/Token_2e_force.png");
-            img = ImageIO.read(is);
+            BufferedImage img = ImageIO.read(is);
             is.close();
             homeIcon.setIcon(new ImageIcon(img));
 
@@ -205,9 +209,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             downloadLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
             JLabel downloadIcon = new JLabel();
 
-            BufferedImage img2 = null;
+           // BufferedImage img2 = null;
             InputStream is2 = dataArchive.getInputStream("images/Token_2e_reinforce_fore.png");
-            img2 = ImageIO.read(is2);
+            BufferedImage img2 = ImageIO.read(is2);
             is2.close();
             downloadIcon.setIcon(new ImageIcon(img2));
 
@@ -221,9 +225,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             guideLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
             JLabel guideIcon = new JLabel();
 
-            BufferedImage img3 = null;
+           // BufferedImage img3 = null;
             InputStream is3 = dataArchive.getInputStream("images/Token_2e_focus.png");
-            img3 = ImageIO.read(is3);
+            BufferedImage img3 = ImageIO.read(is3);
             is3.close();
             guideIcon.setIcon(new ImageIcon(img3));
 
@@ -245,7 +249,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JFrame frame = new JFrame();
             frame.setAlwaysOnTop(true);
             mic.LoggerUtil.logExit(logger,"checkForUpdate - buildScreen");
-            int answer = JOptionPane.showOptionDialog(frame, panel, "Welcome to the X-Wing vassal module",
+            JOptionPane.showOptionDialog(frame, panel, "Welcome to the X-Wing vassal module",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new String[] { "OK" }, "OK");
 
@@ -320,7 +324,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         return null;
     }
 
-
+/*
     public class JLabelLink extends JFrame {
 
         private static final String LABEL_TEXT = "For further information visit:";
@@ -333,4 +337,5 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
         // </editor-fold>
     }
+    */
 }

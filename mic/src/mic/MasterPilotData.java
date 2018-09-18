@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,12 +86,15 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
 
                     // If there is no dispatcher version of this pilot, store the xwing-data version
+                    /*
                     if(dispatcherPilot == null)
                     {
                         loadedData.put(pilotKey, xwingDataPilot);
 
                     // if there is no xwing-data version of this pilot, store the dispatcher version
                     }else if(xwingDataPilot == null)
+                    */
+                    if(xwingDataPilot == null)
                     {
                         loadedData.put(pilotKey, dispatcherPilot);
                     // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -134,12 +136,15 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
 
                     // If there is no dispatcher version of this pilot, store the xwing-data version
+                    /*
                     if(dispatcherPilot == null)
                     {
                         loadedData.put(pilotKey, xwingDataPilot);
 
                         // if there is no xwing-data version of this pilot, store the dispatcher version
                     }else if(xwingDataPilot == null)
+                    */
+                    if(xwingDataPilot == null)
                     {
                         loadedData.put(pilotKey, dispatcherPilot);
                         // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
@@ -262,6 +267,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         }
     }
 
+    /*
     private static void loadFromXwingData(String altXwingDataURL)
     {
         // load from xwing-data
@@ -291,7 +297,8 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             //loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
         }
     }
-
+*/
+    /*
     private static MasterPilotData loadFromDispatcher()
     {
         // load from dispatch
@@ -307,7 +314,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         return data;
     }
-
+*/
     private static MasterPilotData loadFromDispatcher(String altDispatcherURL)
     {
         // load from dispatch

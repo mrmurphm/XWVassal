@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHide> {
+    private static final Logger logger = LoggerFactory.getLogger(OTAMasterDialHides.class);
   //  private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dial_images.json";
 
     private static Map<String, OTAMasterDialHides.OTADialHide> loadedData = null;
@@ -20,25 +23,29 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
     }
     public Collection<OTAMasterDialHides.OTADialHide> getAllDialHides()
     {
+        mic.LoggerUtil.logEntry(logger,"getAllDialHides");
         if(loadedData == null)
         {
             loadData();
         }
+        mic.LoggerUtil.logExit(logger,"getAllDialHides");
         // Object[] actions = loadedData.values().toArray();
         return loadedData.values();
 
     }
-
+/*
     public static OTAMasterDialHides.OTADialHide getDialHide(String xws)
     {
+        mic.LoggerUtil.logEntry(logger,"getDialHide");
         if (loadedData == null) {
             loadData();
         }
+        mic.LoggerUtil.logExit(logger,"getDialHide");
         return loadedData.get(xws);
     }
-
+*/
     private static void loadData() {
-
+        mic.LoggerUtil.logEntry(logger,"loadData");
         // load from
         OTAMasterDialHides data = Util.loadRemoteJson(OTAContentsChecker.OTA_DIALHIDES_JSON_URL, OTAMasterDialHides.class);
         loadedData = Maps.newHashMap();
@@ -51,7 +58,7 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
                 loadedData.put(dialHide.getXws(), dialHide);
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
     public static class OTADialHide {
