@@ -151,7 +151,7 @@ public class StemConditionToken extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    conditionXWS = command.toString();
+                    conditionXWS = command;
                 } catch (Exception e) {
                     logger.error("Error decoding TokenGenerateCommand", e);
                     return null;

@@ -3,14 +3,15 @@ package mic.ota;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
-
- //   private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/pilot_images.json";
+    private static final Logger logger = LoggerFactory.getLogger(OTAMasterPilots.class);
+    //   private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/pilot_images.json";
 
     private static Map<String, OTAMasterPilots.OTAPilot> loadedData = null;
     public static void flushData()
@@ -19,25 +20,29 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
     }
     public Collection<OTAPilot> getAllPilotImagesFromOTA(int edition)
     {
+        mic.LoggerUtil.logEntry(logger,"getAllPilotImagesFromOTA");
         if(loadedData == null)
         {
             loadData(edition);
         }
        // Object[] actions = loadedData.values().toArray();
+        mic.LoggerUtil.logExit(logger,"getAllPilotImagesFromOTA");
         return loadedData.values();
 
     }
 
     public static OTAMasterPilots.OTAPilot getPilot(String pilotxws, String faction, String shipxws, int edition) {
+        mic.LoggerUtil.logEntry(logger,"getPilot");
         if (loadedData == null) {
             loadData(edition);
         }
         String pilotKey = faction +"_"+shipxws+"_"+pilotxws;
+        mic.LoggerUtil.logExit(logger,"getPilot");
         return loadedData.get(pilotKey);
     }
 
     private static void loadData(int edition) {
-
+        mic.LoggerUtil.logEntry(logger,"loadData");
         // load from
         OTAMasterPilots data = new OTAMasterPilots();
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL, OTAMasterPilots.class);
@@ -54,13 +59,16 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
                 loadedData.put(pilotKey, pilot);
             }
         }
+        mic.LoggerUtil.logExit(logger,"loadData");
 
     }
 
     public static OTAPilot getSpecificOTAPilot(String pilotXWS){
+        mic.LoggerUtil.logEntry(logger,"getSpecificOTAPilot");
         for(OTAPilot aPilot : loadedData.values()){
             if(aPilot.getPilotXws().equals(pilotXWS)) return aPilot;
         }
+        mic.LoggerUtil.logExit(logger,"getSpecificOTAPilot");
         return null;
     }
 

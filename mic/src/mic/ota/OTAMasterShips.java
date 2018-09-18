@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
-
-   // private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/ship_images.json";
+    private static final Logger logger = LoggerFactory.getLogger(OTAMasterShips.class);
+    // private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/ship_images.json";
 
     private static Map<String, OTAMasterShips.OTAShip> loadedData = null;
     public static void flushData()
@@ -21,31 +22,37 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
     }
     public Collection<OTAShip> getAllShips(int edition)
     {
+        mic.LoggerUtil.logEntry(logger,"getAllShips");
         if(loadedData == null)
         {
             loadData(edition);
         }
        // Object[] actions = loadedData.values().toArray();
+        mic.LoggerUtil.logExit(logger,"getAllShips");
         return loadedData.values();
 
     }
     public static Map<String, OTAMasterShips.OTAShip> getLoadedData(int edition){
+        mic.LoggerUtil.logEntry(logger,"getLoadedData");
         if(loadedData == null)
         {
             loadData(edition);
         }
+        mic.LoggerUtil.logExit(logger,"getLoadedData");
         return loadedData; }
 
     public static OTAMasterShips.OTAShip getShip(String shipxws, String identifier, int edition) {
+        mic.LoggerUtil.logEntry(logger,"getShip");
         if (loadedData == null) {
             loadData(edition);
         }
         String shipKey = shipxws+"_"+identifier;
+        mic.LoggerUtil.logExit(logger,"getShip");
         return loadedData.get(shipKey);
     }
 
     private static void loadData(int edition) {
-
+        mic.LoggerUtil.logEntry(logger,"loadData");
         // load from
         OTAMasterShips data = new OTAMasterShips();
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
@@ -63,7 +70,7 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
                 loadedData.put(shipKey, ship);
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
     public static class OTAShip {

@@ -9,6 +9,8 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.ImmutableMap;
 import mic.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,15 +21,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.logToChat;
-
 public class OTAContentsChecker extends AbstractConfigurable {
+    private static final Logger logger = LoggerFactory.getLogger(OTAContentsChecker.class);
     MasterGameModeRouter mgmr = new MasterGameModeRouter();
     static final int NBFLASHES = 60000;
     static final int DELAYBETWEENFLASHES = 700;
@@ -117,6 +122,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     public void activateBlinky(final Color whichColor)
     {
+        mic.LoggerUtil.logEntry(logger,"activateBlinky");
         contentCheckerButton.setForeground(Color.WHITE);
         contentCheckerButton.setBackground(whichColor);
 
@@ -154,9 +160,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     }
                 }
             }, 0,DELAYBETWEENFLASHES);
+        mic.LoggerUtil.logExit(logger,"activateBlinky");
     }
     public void activateBlinky2ndTab()
     {
+        mic.LoggerUtil.logEntry(logger,"activateBlinky2ndTab");
         myTabbedPane.setForegroundAt(0,Color.WHITE);
         myTabbedPane.setBackgroundAt(0,Color.BLACK);
 
@@ -194,9 +202,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
         }, 0,DELAYBETWEENFLASHES);
+        mic.LoggerUtil.logExit(logger,"activateBlinky2ndTab");
     }
     public void activateBlinky1stTab()
     {
+        mic.LoggerUtil.logEntry(logger,"activateBlinky1stTab");
         myTabbedPane.setForegroundAt(1,Color.WHITE);
         myTabbedPane.setBackgroundAt(1,Color.RED);
 
@@ -234,9 +244,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
         }, 0,DELAYBETWEENFLASHES);
+        mic.LoggerUtil.logExit(logger,"activateBlinky1stTab");
     }
     public void addTo(Buildable parent) {
 
+
+
+
+        mic.LoggerUtil.logEntry(logger,"addTo");
         JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         backupColor = b.getBackground();
@@ -261,8 +276,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // read contents of want1stednotifs.txt
             String wantNotifStr = null;
             try {
-
-                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("want1stednotifs.txt");
+                mic.LoggerUtil.logEntry(logger,"addTo - reading 'want1stednotifs.txt");
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("want1stednotifs.txt'");
                 if (inputStream == null) {
                     logToChat("couldn't load /want1stednotifs.txt");
                 }
@@ -280,16 +295,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
                 else wantToBeNotified1st = false;
                 inputStream.close();
+
             } catch (Exception e) {
                 System.out.println("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
                 logToChat("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
             }
+            mic.LoggerUtil.logExit(logger,"addTo - reading 'want1stednotifs.txt'");
         }
 
+        mic.LoggerUtil.logEntry(logger,"addTo - XWS2Pilots.loadFromRemote()");
         allShips = XWS2Pilots.loadFromRemote();
+        mic.LoggerUtil.logExit(logger,"addTo - XWS2Pilots.loadFromRemote()");
+        mic.LoggerUtil.logEntry(logger,"addTo - XWS2Upgrades.loadFromRemote()");
         allUpgrades = XWS2Upgrades.loadFromRemote();
+        mic.LoggerUtil.logExit(logger,"addTo - XWS2Upgrades.loadFromRemote()");
+        mic.LoggerUtil.logEntry(logger,"addTo - XWS2Upgrades.loadConditionsFromRemote()");
         allConditions = XWS2Upgrades.loadConditionsFromRemote();
-
+        mic.LoggerUtil.logExit(logger,"addTo - XWS2Upgrades.loadConditionsFromRemote()");
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
 
 
@@ -303,19 +325,30 @@ public class OTAContentsChecker extends AbstractConfigurable {
             activateBlinky(Color.BLACK);
         }
         GameModule.getGameModule().getToolBar().add(b);
+        mic.LoggerUtil.logExit(logger,"addTo");
     }
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
-            return mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+        mic.LoggerUtil.logEntry(logger,"parseTheManifestForShipPilots");
+        XWS2Pilots.pilotsDataSources sources = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+        mic.LoggerUtil.logExit(logger,"parseTheManifestForShipPilots");
+        return sources;
     }
     private static XWS2Upgrades.upgradesDataSources parseTheManifestForUpgrades(){
-        return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
+        mic.LoggerUtil.logEntry(logger,"parseTheManifestForUpgrades");
+        XWS2Upgrades.upgradesDataSources sources = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
+        mic.LoggerUtil.logExit(logger,"parseTheManifestForUpgrades");
+        return sources;
     }
     private static XWS2Upgrades.conditionsDataSources parseTheManifestForConditions(){
-        return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
+        mic.LoggerUtil.logEntry(logger,"parseTheManifestForConditions");
+        XWS2Upgrades.conditionsDataSources sources = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
+        mic.LoggerUtil.logExit(logger,"parseTheManifestForConditions");
+        return sources;
     }
 
     private static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
+        mic.LoggerUtil.logEntry(logger,"downloadXwingDataAndDispatcherJSONFiles_2e");
         boolean errorOccurredOnXWingData = false;
         //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
         //by putting them in /data/pilots/rebelalliance/
@@ -340,10 +373,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
             logToChat("error download and integrating the jsons");
             errorOccurredOnXWingData = true;
         }
+        mic.LoggerUtil.logExit(logger,"downloadXwingDataAndDispatcherJSONFiles_2e");
         return errorOccurredOnXWingData;
     }
+
+
     private static boolean downloadXwingDataAndDispatcherJSONFiles()
     {
+        mic.LoggerUtil.logEntry(logger,"downloadXwingDataAndDispatcherJSONFiles");
         boolean errorOccurredOnXWingData = false;
         //these will be dumped in the root of the module
         ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
@@ -364,12 +401,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
             logToChat("error download and integrating the jsons");
             errorOccurredOnXWingData = true;
         }
+        mic.LoggerUtil.logExit(logger,"downloadXwingDataAndDispatcherJSONFiles");
         return errorOccurredOnXWingData;
     }
 
 
     public static int justFind1MissingContent_2e(){
-
+        mic.LoggerUtil.logEntry(logger,"justFind1MissingContent_2e");
         int tempCount = 0;
 
         boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
@@ -383,6 +421,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
             for(OTAMasterPilots.OTAPilot pilot : pilots){
                 if(!pilot.getStatus() && pilot.getStatusOTA()){
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
             }
@@ -394,6 +433,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
             for (OTAMasterShips.OTAShip ship : ships) {
                 if (!ship.getStatus() && ship.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
             }
@@ -405,6 +445,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
                 if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
             }
@@ -417,10 +458,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck_2e.checkConditions(true, allConditions);
             for (OTAMasterConditions.OTACondition condition : conditions) {
                 if (!condition.getStatus() && condition.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
 
                 if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
             }
@@ -434,17 +477,18 @@ public class OTAContentsChecker extends AbstractConfigurable {
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
                 if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
                     return 1;
                 }
             }
             conditions = null;
         }
-
+        mic.LoggerUtil.logExit(logger,"justFind1MissingContent_2e");
         return tempCount;
     }
     public static int justFind1MissingContent()
     {
-
+        mic.LoggerUtil.logEntry(logger,"justFind1MissingContent");
         // grab xwing-data: pilots, ships, upgrades, conditions
         // dispatcher: pilots, ships, upgrades, conditions
         // and save to the module
@@ -462,6 +506,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck.checkPilots(true);
             for (OTAMasterPilots.OTAPilot pilot : pilots) {
                 if (!pilot.getStatus() && pilot.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -472,6 +517,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterActions.OTAAction> actions = modIntCheck.checkActions(true);
             for (OTAMasterActions.OTAAction action : actions) {
                 if (!action.getStatus() && action.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -484,6 +530,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck.checkShips(true);
             for (OTAMasterShips.OTAShip ship : ships) {
                 if (!ship.getStatus() && ship.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -495,6 +542,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck.checkUpgrades(true);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
                 if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -506,10 +554,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck.checkConditions(true);
             for (OTAMasterConditions.OTACondition condition : conditions) {
                 if (!condition.getStatus() && condition.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
 
                 if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -521,6 +571,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides(true);
             for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
                 if (!dialHide.getStatus() && dialHide.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -536,6 +587,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             while (dialMaskIterator.hasNext()) {
                 missingDialMask = dialMaskIterator.next();
                 if (!missingDialMask.getStatus() && missingDialMask.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
@@ -549,10 +601,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
                 if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
+                    mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
                     return 1;
                 }
             }
         }
+        mic.LoggerUtil.logExit(logger,"justFind1MissingContent");
         return 0;
     }
 
@@ -561,6 +615,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
      */
 
     private synchronized void ContentsCheckerWindow2ndEdTab(JPanel hostPanel) {
+        mic.LoggerUtil.logEntry(logger,"ContentsCheckerWindow2ndEdTab");
         results2e = checkAllResults2e();
         finalTable = buildFinalTable2e(results2e);
         hostPanel.setLayout(new BoxLayout(hostPanel, BoxLayout.Y_AXIS));
@@ -639,9 +694,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             downloadButton2e.setEnabled(true);
         }
+        mic.LoggerUtil.logExit(logger,"ContentsCheckerWindow2ndEdTab");
     }
     private synchronized void ContentsCheckerWindow1stEdTab(JPanel hostPanel)
     {
+        mic.LoggerUtil.logEntry(logger,"ContentsCheckerWindow1stEdTab");
         results = checkAllResults();
         finalTable = buildFinalTable(results);
 
@@ -764,9 +821,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             downloadButton.setEnabled(true);
         }
+        mic.LoggerUtil.logExit(logger,"ContentsCheckerWindow1stEdTab");
     }
     private synchronized void ContentsCheckerWindow()
     {
+        mic.LoggerUtil.logEntry(logger,"ContentsCheckerWindow");
         // =============================================================
         // Common to both editions
         // =============================================================
@@ -855,13 +914,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         if(missing1stEdContent>0) activateBlinky1stTab();
         if(missing2ndEdContent>0) activateBlinky2ndTab();
-
+        mic.LoggerUtil.logExit(logger,"ContentsCheckerWindow");
     }
 
     //Download the missing content from the built CheckResults list (can be every content if the checkbox downloadAll was selected
     private void downloadAll2e(String branchURL)
     {
-
+        mic.LoggerUtil.logEntry(logger,"downloadAll2e");
         boolean needToSaveModule = false;
 
         GameModule gameModule = GameModule.getGameModule();
@@ -939,10 +998,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 logToChat("Exception occurred saving module");
             }
         }
+        mic.LoggerUtil.logExit(logger,"downloadAll2e");
     }
     private void downloadAll(String branchURL)
     {
-
+        mic.LoggerUtil.logEntry(logger,"downloadAll");
         boolean needToSaveModule = false;
 
         GameModule gameModule = GameModule.getGameModule();
@@ -1036,11 +1096,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 logToChat("Exception occurred saving module");
             }
         }
+        mic.LoggerUtil.logExit(logger,"downloadAll");
     }
 
     //refresh the table results for the benefit of the user
     private void refreshFinalTable2e()
     {
+        mic.LoggerUtil.logEntry(logger,"refreshFinalTable2e");
         results2e = checkAllResults2e();
         String[][] convertedTableResults = buildTableResultsFromResults2e(results2e);
 
@@ -1070,9 +1132,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             downloadButton2e.setEnabled(true);
         }
         // framefor1st.repaint();
+        mic.LoggerUtil.logExit(logger,"refreshFinalTable2e");
     }
     private void refreshFinalTable()
     {
+        mic.LoggerUtil.logEntry(logger,"refreshFinalTable");
         results = checkAllResults();
         String[][] convertedTableResults = buildTableResultsFromResults(results);
 
@@ -1108,10 +1172,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             downloadButton.setEnabled(true);
         }
         // framefor1st.repaint();
+        mic.LoggerUtil.logExit(logger,"refreshFinalTable");
     }
 
     private String[][] buildTableResultsFromResults2e(OTAContentsCheckerResults results)
     {
+        mic.LoggerUtil.logEntry(logger,"buildTableResultsFromResults2e");
         ArrayList<String[]> tableResults = new ArrayList<String[]>();
         String[] tableRow = null;
 
@@ -1230,10 +1296,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // convert the arrayList to an array
         String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
+        mic.LoggerUtil.logExit(logger,"buildTableResultsFromResults2e");
         return convertedTableResults;
     }
     private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)
     {
+        mic.LoggerUtil.logEntry(logger,"buildTableResultsFromResults");
         ArrayList<String[]> tableResults = new ArrayList<String[]>();
         String[] tableRow = null;
 
@@ -1360,11 +1428,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // convert the arrayList to an array
         String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
+        mic.LoggerUtil.logExit(logger,"buildTableResultsFromResults");
         return convertedTableResults;
     }
 
     private JTable buildFinalTable2e(OTAContentsCheckerResults results)
     {
+        mic.LoggerUtil.logEntry(logger,"buildFinalTable2e");
         //{"Type","Name", "Variant"};
 
         String[][] convertedTableResults = buildTableResultsFromResults2e(results);
@@ -1389,11 +1459,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
         finalTable.setRowSorter(sorter);
 
         finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        mic.LoggerUtil.logExit(logger,"buildFinalTable2e");
         return finalTable;
 
     }
     private JTable buildFinalTable(OTAContentsCheckerResults results)
     {
+        mic.LoggerUtil.logEntry(logger,"buildFinalTable");
         //{"Type","Name", "Variant"};
 
         String[][] convertedTableResults = buildTableResultsFromResults(results);
@@ -1418,12 +1490,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
         finalTable.setRowSorter(sorter);
 
         finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        mic.LoggerUtil.logExit(logger,"buildFinalTable");
         return finalTable;
 
     }
 
     private String[][] convertTableArrayListToArray(ArrayList<String[]> tableResults)
     {
+        mic.LoggerUtil.logEntry(logger,"convertTableArrayListToArray");
         // convert the ArrayList<String[]> to a String[][]
         String[][] convertedTableResults = new String[tableResults.size()][3];
         String[] tableRow = null;
@@ -1432,10 +1506,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = tableResults.get(i);
             convertedTableResults[i] = tableRow;
         }
+        mic.LoggerUtil.logExit(logger,"convertTableArrayListToArray");
         return convertedTableResults;
     }
 
     private OTAContentsCheckerResults checkAllResults2e() {
+        mic.LoggerUtil.logEntry(logger,"checkAllResults2e");
         results2e = new OTAContentsCheckerResults();
 
         // perform all checks
@@ -1470,10 +1546,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
         results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
 */
+        mic.LoggerUtil.logExit(logger,"checkAllResults2e");
         return results2e;
     }
     private OTAContentsCheckerResults checkAllResults()
     {
+        mic.LoggerUtil.logEntry(logger,"checkAllResults");
         results = new OTAContentsCheckerResults();
 
         // perform all checks
@@ -1498,12 +1576,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
         results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
 
-
+        mic.LoggerUtil.logExit(logger,"checkAllResults");
         return results;
     }
 
     private ArrayList<OTAMasterPilots.OTAPilot> findMissingPilots(ArrayList<OTAMasterPilots.OTAPilot> pilotResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingPilots");
         ArrayList<OTAMasterPilots.OTAPilot> missing = new ArrayList<OTAMasterPilots.OTAPilot>();
         Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
         OTAMasterPilots.OTAPilot pilot = null;
@@ -1515,11 +1594,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 missing.add(pilot);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingPilots");
         return missing;
     }
 
     private ArrayList<OTAMasterUpgrades.OTAUpgrade> findMissingUpgrades(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingUpgrades");
         ArrayList<OTAMasterUpgrades.OTAUpgrade> missing = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
         Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
         OTAMasterUpgrades.OTAUpgrade upgrade = null;
@@ -1531,11 +1612,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 missing.add(upgrade);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingUpgrades");
         return missing;
     }
 
     private ArrayList<OTAMasterConditions.OTACondition> findMissingConditions(ArrayList<OTAMasterConditions.OTACondition> conditionResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingConditions");
         ArrayList<OTAMasterConditions.OTACondition> missing = new ArrayList<OTAMasterConditions.OTACondition>();
         Iterator<OTAMasterConditions.OTACondition> conditionIterator = conditionResults.iterator();
         OTAMasterConditions.OTACondition condition = null;
@@ -1548,11 +1631,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
 
         }
+        mic.LoggerUtil.logExit(logger,"findMissingConditions");
         return missing;
     }
 
     private ArrayList<OTAMasterShips.OTAShip> findMissingShips(ArrayList<OTAMasterShips.OTAShip> shipResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingShips");
         ArrayList<OTAMasterShips.OTAShip> missing = new ArrayList<OTAMasterShips.OTAShip>();
         Iterator<OTAMasterShips.OTAShip> shipIterator = shipResults.iterator();
         OTAMasterShips.OTAShip ship = null;
@@ -1564,11 +1649,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 missing.add(ship);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingShips");
         return missing;
     }
 
     private ArrayList<OTAMasterActions.OTAAction> findMissingActions(ArrayList<OTAMasterActions.OTAAction> actionResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingActions");
         ArrayList<OTAMasterActions.OTAAction> missing = new ArrayList<OTAMasterActions.OTAAction>();
         Iterator<OTAMasterActions.OTAAction> actionIterator = actionResults.iterator();
         OTAMasterActions.OTAAction action = null;
@@ -1580,11 +1667,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 missing.add(action);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingActions");
         return missing;
     }
 
     private ArrayList<OTAMasterDialHides.OTADialHide> findMissingDialHides(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingDialHides");
         ArrayList<OTAMasterDialHides.OTADialHide> missing = new ArrayList<OTAMasterDialHides.OTADialHide>();
         Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHideResults.iterator();
         OTAMasterDialHides.OTADialHide dialHide = null;
@@ -1596,11 +1685,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 missing.add(dialHide);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingDialHides");
         return missing;
     }
 
     private ArrayList<OTADialMask> findMissingDialMasks(ArrayList<OTADialMask> dialMaskResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingDialMasks");
         ArrayList<OTADialMask> missing = new ArrayList<OTADialMask>();
         Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
         while(dialMaskIterator.hasNext())
@@ -1612,11 +1703,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingDialMasks");
         return missing;
     }
 
     private ArrayList<OTAShipBase> findMissingShipBases(ArrayList<OTAShipBase> shipBaseResults)
     {
+        mic.LoggerUtil.logEntry(logger,"findMissingShipBases");
         ArrayList<OTAShipBase> missing = new ArrayList<OTAShipBase>();
         Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
         while(shipBaseIterator.hasNext())
@@ -1628,6 +1721,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             }
         }
+        mic.LoggerUtil.logExit(logger,"findMissingShipBases");
         return missing;
     }
 

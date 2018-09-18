@@ -590,7 +590,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
             sb.append(".png");
 
-            String shipArt = new String();
+            String shipArt = "";
             shipArt = sb.toString();
         //    mic.Util.logToChat(shipArt);
         //    if(dualArt)
@@ -641,7 +641,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    xwsShipName = command.toString();
+                    xwsShipName = command;
                 } catch (Exception e) {
                     logger.error("Error decoding ShipGenerateCommand", e);
                     return null;

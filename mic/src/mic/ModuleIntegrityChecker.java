@@ -78,7 +78,8 @@ public class ModuleIntegrityChecker {
                 boolean gonnaDL = false;
                 if(exists == false && existsInOTA) gonnaDL = true;
 
-                if(upgrade.getStatus() || (!upgrade.getStatus() && existsInOTA)) {
+                //if(upgrade.getStatus() || (!upgrade.getStatus() && existsInOTA)) {
+                if(upgrade.getStatus() || existsInOTA) {
                     upgradeList.add(upgrade);
                     if(onlyDetectOne && gonnaDL) return upgradeList;
                 }
@@ -124,11 +125,14 @@ public class ModuleIntegrityChecker {
 
                 // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
                 boolean gonnaDL = false;
-                if((conditionExists == false && conditionExistsInOTA) || (conditionTokenExists == false && conditionTokenExistsInOTA)) gonnaDL = true;
-
+                //if((conditionExists == false && conditionExistsInOTA) || (conditionTokenExists == false && conditionTokenExistsInOTA)) gonnaDL = true;
+                if(!conditionExists && (conditionExistsInOTA || conditionTokenExistsInOTA) )
+                {
+                    gonnaDL = true;
+                }
                 if(
-                        (conditionExists ||  (!conditionExists && conditionExistsInOTA)) ||
-                                (conditionTokenExists || (!conditionTokenExists && conditionTokenExistsInOTA))
+                        (conditionExists ||  conditionExistsInOTA) ||
+                                (conditionTokenExists || conditionTokenExistsInOTA)
                         )
                 {
                     conditionList.add(condition);

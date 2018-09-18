@@ -6,6 +6,8 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,9 +20,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 public class XWOTAUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(XWOTAUtils.class);
     private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
 
     private static String[] actionOrder = {
@@ -56,6 +57,7 @@ public class XWOTAUtils {
 
     public static String simplifyFactionName(String faction)
     {
+        mic.LoggerUtil.logEntry(logger,"simplifyFactionName");
         String newFaction = null;
         if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
         {
@@ -71,12 +73,14 @@ public class XWOTAUtils {
         {
             newFaction = faction;
         }
+        mic.LoggerUtil.logExit(logger,"simplifyFactionName");
         return newFaction;
+
     }
 
     public static String buildFiringArcImageName(String size, String faction, String arc)
     {
-
+        mic.LoggerUtil.logEntry(logger,"buildFiringArcImageName");
         //Firing_Arc_<xws firing_arc, lower case, remove spaces>_<xws size>_<xws faction, lower case, remove spaces>.svg
         //Note: "Resistance" needs to be "rebelalliance" and "First Order" needs to be "galacticempire"
 
@@ -96,12 +100,14 @@ public class XWOTAUtils {
 
 
         arcImagePrefixSB.append(".png");
-
+        mic.LoggerUtil.logExit(logger,"buildFiringArcImageName");
         return arcImagePrefixSB.toString();
     }
 
     public static void buildBaseShipImage2e(String faction, String shipXWS, String size, String identifier, String shipImageName, ArchiveWriter writer)
     {
+
+        mic.LoggerUtil.logEntry(logger,"buildBaseShipImage2e");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
 
@@ -124,17 +130,20 @@ public class XWOTAUtils {
             Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
         }
 
-
+        mic.LoggerUtil.logExit(logger,"buildBaseShipImage2e");
     }
 
     private static String findArcImageName(String size, String faction) {
+        mic.LoggerUtil.logEntry(logger,"findArcImageName");
         String sb = "";
         sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size + ".png";
+        mic.LoggerUtil.logExit(logger,"findArcImageName");
         return sb;
     }
 
     public static void buildBaseShipImage(String faction, String shipXWS, List<String> arcs, List<String> actions, String size, String identifier, String shipImageName, ArchiveWriter writer)
     {
+        mic.LoggerUtil.logEntry(logger,"buildBaseShipImage");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
 
@@ -161,12 +170,13 @@ public class XWOTAUtils {
             Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
         }
 
-
+        mic.LoggerUtil.logExit(logger,"buildBaseShipImage");
     }
 
 
     public static void buildDialMaskImages(String faction, String shipXWS, String dialHideImageName , String dialMaskImageName, ArchiveWriter writer)
     {
+        mic.LoggerUtil.logEntry(logger,"buildDialMaskImages");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         final String rebelDialImage = "DialBack_rebelalliance.png";
@@ -204,18 +214,22 @@ public class XWOTAUtils {
         {
             Util.logToChat("Exception occurred generating dial mask image for "+faction+"/"+shipXWS);
         }
-
+        mic.LoggerUtil.logExit(logger,"buildDialMaskImages");
 
     }
 
     private static String determineAltShipBaseNameFromImage(String faction, String shipImageName){
+        mic.LoggerUtil.logEntry(logger,"determineAltShipBaseNameFromImage");
         String coreName = shipImageName.replace("Ship_","").replace(".png","");
-        return "Ship_Base_"+simplifyFactionName(faction)+"_"+coreName+".png";
+        String returnName = "Ship_Base_"+simplifyFactionName(faction)+"_"+coreName+".png";
+        mic.LoggerUtil.logExit(logger,"determineAltShipBaseNameFromImage");
+        return returnName;
     }
 
 
     private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer, int edition)
     {
+        mic.LoggerUtil.logEntry(logger,"saveBaseShipImageToModule");
         String targetBaseImageName = buildShipBaseImageName(faction,shipXWS,identifier, edition);
 
         File tempFile = null;
@@ -247,11 +261,12 @@ public class XWOTAUtils {
         {
 
         }
+        mic.LoggerUtil.logExit(logger,"saveBaseShipImageToModule");
     }
 
     private static void saveDialMaskImageToModule(String dialMaskImageName, BufferedImage dialMaskImage, ArchiveWriter writer)
     {
-
+        mic.LoggerUtil.logEntry(logger,"saveDialMaskImageToModule");
         File tempFile = null;
         try {
             tempFile = File.createTempFile("XWVassalMaskImage", "");
@@ -281,10 +296,12 @@ public class XWOTAUtils {
         {
 
         }
+        mic.LoggerUtil.logExit(logger,"saveDialMaskImageToModule");
     }
 
     private static void saveBaseShipImageToModule(String faction, String shipXWS, BufferedImage baseImage, String targetBaseImageName)
     {
+        mic.LoggerUtil.logEntry(logger,"saveBaseShipImageToModule");
     //    String targetBaseImageName = buildShipBaseImageName(faction,shipXWS);
 
         File tempFile = null;
@@ -316,10 +333,12 @@ public class XWOTAUtils {
         {
 
         }
+        mic.LoggerUtil.logExit(logger,"saveBaseShipImageToModule");
     }
 
     private static BufferedImage buildShipBase2e(String size, DataArchive dataArchive) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"buildShipBase2e");
         final String smallBlackBase = "Ship2e_generic_small.png";
         final String mediumBlackBase = "Ship2e_generic_medium.png";
         final String largeBlackBase = "Ship2e_generic_large.png";
@@ -342,13 +361,13 @@ public class XWOTAUtils {
         }
         InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
         BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
-
+        mic.LoggerUtil.logExit(logger,"buildShipBase2e");
         return image;
     }
 
     private static BufferedImage buildShipBase(String size, DataArchive dataArchive) throws IOException
     {
-
+        mic.LoggerUtil.logEntry(logger,"buildShipBase");
         final String smallBlackBase = "Ship_Generic_Starfield_Small.png";
         final String largeBlackBase = "Ship_Generic_Starfield_Large.png";
         String cardboardBaseImageName = null;
@@ -368,13 +387,13 @@ public class XWOTAUtils {
 
         InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
         BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
-
+        mic.LoggerUtil.logExit(logger,"buildShipBase");
         return image;
     }
 
     private static BufferedImage addArcsToBaseShipImage(List<String> arcs,String size, String faction, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
-
+        mic.LoggerUtil.logEntry(logger,"addArcsToBaseShipImage");
         List<String> arcImageNames = new ArrayList<String>();
         // determine which arcs to use
         for(String arc : arcs)
@@ -390,12 +409,13 @@ public class XWOTAUtils {
              Graphics g = baseImage.getGraphics();
             g.drawImage(arcImage, 0, 0, null);
         }
+        mic.LoggerUtil.logExit(logger,"addArcsToBaseShipImage");
         return baseImage;
     }
 
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
-
+        mic.LoggerUtil.logEntry(logger,"addShipToBaseShipImage");
         // add the ship
         // determine the ship image to use
         String shipImageName = "Ship_"+shipXWS+".png";
@@ -408,37 +428,40 @@ public class XWOTAUtils {
         Graphics g = baseImage.getGraphics();
 
         g.drawImage(shipImage, 0, 0, null);
-
+        mic.LoggerUtil.logExit(logger,"addShipToBaseShipImage");
         return baseImage;
 
     }
 
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"addShipToBaseShipImage");
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
         Graphics g = baseImage.getGraphics();
         g.drawImage(shipImage, 0, 0, null);
+        mic.LoggerUtil.logExit(logger,"addShipToBaseShipImage");
         return baseImage;
 
     }
 
     private static BufferedImage addShipToBaseShipImage2e(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String imageName) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"addShipToBaseShipImage2e");
         InputStream is = dataArchive.getInputStream("images/" + imageName);
 
         BufferedImage imageToAdd = ImageUtils.getImage(imageName, is);
 
         Graphics g = baseImage.getGraphics();
         g.drawImage(imageToAdd, 0, 0, null);
-
+        mic.LoggerUtil.logExit(logger,"addShipToBaseShipImage2e");
         return baseImage;
 
     }
 
     private static BufferedImage addActionsToBaseShipImage(List<String> actions, String size, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
-
+        mic.LoggerUtil.logEntry(logger,"addActionsToBaseShipImage");
         List<String> actionImageNames = new ArrayList<String>();
         //sort the action order
         actions = sortActions(actions);
@@ -485,6 +508,7 @@ public class XWOTAUtils {
             g.drawImage(actionImage, actionX, actionY, null);
 
         }
+        mic.LoggerUtil.logExit(logger,"addActionsToBaseShipImage");
         return baseImage;
     }
 
@@ -495,6 +519,7 @@ public class XWOTAUtils {
 
     private static List<String> sortActions(List<String> actions)
     {
+        mic.LoggerUtil.logEntry(logger,"sortActions");
         List<String> sortedActions = new ArrayList<String>();
 
         // loop through each action in order
@@ -518,13 +543,13 @@ public class XWOTAUtils {
             }
         }
 
-
+        mic.LoggerUtil.logExit(logger,"sortActions");
         return sortedActions;
     }
 
     public static String buildShipBaseImageName(String faction, String shipXWS, String identifier, int edition)
     {
-
+        mic.LoggerUtil.logEntry(logger,"buildShipBaseImageName");
         //Ship_Base_<faction lowercase no spaces>_<shipXWS>.png
 
         StringBuilder shipBaseImageSB = new StringBuilder();
@@ -543,14 +568,14 @@ public class XWOTAUtils {
         shipBaseImageSB.append(identifier);
 
         shipBaseImageSB.append(".png");
-
+        mic.LoggerUtil.logExit(logger,"buildShipBaseImageName");
         return shipBaseImageSB.toString();
     }
 
 
     public static String buildDialMaskImageName(String faction, String shipXWS)
     {
-
+        mic.LoggerUtil.logEntry(logger,"buildDialMaskImageName");
         //DialMask_<faction lowercase no spaces>_<shipXWS>.png
 
         StringBuilder shipBaseImageSB = new StringBuilder();
@@ -566,12 +591,13 @@ public class XWOTAUtils {
 
 
         shipBaseImageSB.append(".png");
-
+        mic.LoggerUtil.logExit(logger,"buildDialMaskImageName");
         return shipBaseImageSB.toString();
     }
 
     public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"downloadJSONFilesFromGitHub");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
@@ -588,12 +614,14 @@ public class XWOTAUtils {
             fileContents = downlodFileFromOTA(jsonFile);
             addFileToModule(fileName, fileContents, writer);
         }
+        mic.LoggerUtil.logEntry(logger,"writer.save");
         writer.save();
-
+        mic.LoggerUtil.logExit(logger,"writer.save");
+        mic.LoggerUtil.logExit(logger,"downloadJSONFilesFromGitHub");
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
-
+        mic.LoggerUtil.logEntry(logger,"downloadAndSaveImagesFromOTA");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
@@ -643,11 +671,12 @@ public class XWOTAUtils {
         {
             Util.logToChat("IOException ocurred saving images " + e.getMessage());
         }
-
+        mic.LoggerUtil.logExit(logger,"downloadAndSaveImagesFromOTA");
     }
 
     public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer, String branchURL)
     {
+        mic.LoggerUtil.logEntry(logger,"downloadImagesFromOTA");
         Iterator<String> i = imageNames.iterator();
         while(i.hasNext())
         {
@@ -684,12 +713,12 @@ public class XWOTAUtils {
             }
 
         }
-
+        mic.LoggerUtil.logExit(logger,"downloadImagesFromOTA");
     }
 
     public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames, String branchURL)
     {
-
+        mic.LoggerUtil.logEntry(logger,"downloadAndSaveImagesFromOTA");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
@@ -738,12 +767,13 @@ public class XWOTAUtils {
         {
             Util.logToChat("IOException ocurred saving images " + e.getMessage());
         }
-
+        mic.LoggerUtil.logExit(logger,"downloadAndSaveImagesFromOTA");
     }
 
 
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName, String branchURL)
     {
+        mic.LoggerUtil.logEntry(logger,"downloadAndSaveImageFromOTA");
         boolean imageFound = false;
         byte[] imageBytes = null;
 
@@ -774,11 +804,12 @@ public class XWOTAUtils {
                 Util.logToChat("IOException ocurred adding an image " + e.getMessage());
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"downloadAndSaveImageFromOTA");
     }
 
     private static byte[] downlodFileFromOTA(String urlString) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"downlodFileFromOTA");
         URL remoteURL = null;
         remoteURL = new URL(urlString);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -795,12 +826,14 @@ public class XWOTAUtils {
         }
         byte[] bytes = baos.toByteArray();
         baos.close();
+        mic.LoggerUtil.logExit(logger,"downlodFileFromOTA");
         return bytes;
     }
 
 
     private static byte[] downloadFileFromOTA(String fileType, String fileName, String branchURL) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"downlodFileFromOTA");
         URL OTAImageURL = null;
         //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
         String url = branchURL + fileType + "/" + fileName;
@@ -822,12 +855,13 @@ public class XWOTAUtils {
         }
         byte[] bytes = baos.toByteArray();
         baos.close();
+        mic.LoggerUtil.logExit(logger,"downlodFileFromOTA");
         return bytes;
     }
 
     public static boolean imageExistsInOTA(String fileType, String fileName, String branchURL)
     {
-
+        mic.LoggerUtil.logEntry(logger,"imageExistsInOTA");
         String url = branchURL + fileType + "/" + fileName;
 
         HttpURLConnection httpUrlConn;
@@ -839,10 +873,11 @@ public class XWOTAUtils {
             // Set timeouts in milliseconds
             httpUrlConn.setConnectTimeout(30000);
             httpUrlConn.setReadTimeout(30000);
-
+            mic.LoggerUtil.logExit(logger,"imageExistsInOTA");
             return (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+            mic.LoggerUtil.logExit(logger,"imageExistsInOTA");
             return false;
         }
     }
@@ -853,13 +888,16 @@ public class XWOTAUtils {
     //    DataArchive dataArchive = gameModule.getDataArchive();
     //    FileArchive fileArchive = dataArchive.getArchive();
      //   ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        mic.LoggerUtil.logEntry(logger,"addFileToModule");
         writer.addFile(fileName,fileBytes);
+        mic.LoggerUtil.logExit(logger,"addFileToModule");
      //   writer.save();
     }
 
 
     public static void addFileToModule(String fileName, byte[] fileBytes) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"addFileToModule");
             GameModule gameModule = GameModule.getGameModule();
             DataArchive dataArchive = gameModule.getDataArchive();
             FileArchive fileArchive = dataArchive.getArchive();
@@ -867,27 +905,32 @@ public class XWOTAUtils {
             //addFileToModule(fileName, fileBytes,writer);
             writer.addFile(fileName,fileBytes);
             writer.save();
+        mic.LoggerUtil.logExit(logger,"addFileToModule");
     }
 
     public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
+        mic.LoggerUtil.logEntry(logger,"addImageToModule");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
         writer.addImage(imageName,imageBytes);
         writer.save();
+        mic.LoggerUtil.logExit(logger,"addImageToModule");
     }
 
     public static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
     {
-
+        mic.LoggerUtil.logEntry(logger,"addImageToModule");
         writer.addImage(imageName,imageBytes);
+        mic.LoggerUtil.logExit(logger,"addImageToModule");
      //   writer.save();
     }
 
     public static boolean imageExistsInModule(String imageName)
     {
+        mic.LoggerUtil.logEntry(logger,"imageExistsInModule");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
@@ -901,13 +944,14 @@ public class XWOTAUtils {
         {
             Util.logToChat("Exception searching for image in module");
         }
-
+        mic.LoggerUtil.logExit(logger,"imageExistsInModule");
         return found;
 
     }
 
     public static boolean fileExistsInModule(String fileName)
     {
+        mic.LoggerUtil.logEntry(logger,"fileExistsInModule");
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
@@ -920,12 +964,12 @@ public class XWOTAUtils {
         {
             Util.logToChat("Exception searching for file in module");
         }
-
+        mic.LoggerUtil.logExit(logger,"fileExistsInModule");
         return found;
     }
 
     public static boolean amIDoingOrder66(){
-
+        mic.LoggerUtil.logEntry(logger,"amIDoingOrder66");
         boolean doingOrder66 = false;
         if (!XWOTAUtils.fileExistsInModule("cdr")) {
             doingOrder66 = false;
@@ -935,8 +979,8 @@ public class XWOTAUtils {
             try {
 
                 InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("cdr");
-                if (inputStream == null) {
-                }
+       //         if (inputStream == null) {
+       //         }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder contents = new StringBuilder();
                 String line;
@@ -951,15 +995,17 @@ public class XWOTAUtils {
                 }
                 else doingOrder66 = false;
                 inputStream.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
             }
         }
+        mic.LoggerUtil.logExit(logger,"amIDoingOrder66");
          return doingOrder66;
     }
 
 
 
     public static void checkOnlineOrder66(){
+        mic.LoggerUtil.logEntry(logger,"checkOnlineOrder66");
         String O66URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/oss";
         String line = "";
         try {
@@ -985,5 +1031,6 @@ public class XWOTAUtils {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
+        mic.LoggerUtil.logExit(logger,"checkOnlineOrder66");
     }
 }

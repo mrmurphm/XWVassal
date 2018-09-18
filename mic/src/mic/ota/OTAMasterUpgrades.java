@@ -3,14 +3,15 @@ package mic.ota;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import mic.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> {
-
-  //  private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/upgrade_images.json";
+    private static final Logger logger = LoggerFactory.getLogger(OTAMasterUpgrades.class);
+    //  private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/upgrade_images.json";
 
     private static Map<String, OTAMasterUpgrades.OTAUpgrade> loadedData = null;
 
@@ -21,17 +22,18 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
 
     public Collection<OTAMasterUpgrades.OTAUpgrade> getAllUpgrades(int edition)
     {
+        mic.LoggerUtil.logEntry(logger,"getAllUpgrades");
         if(loadedData == null)
         {
             loadData(edition);
         }
-
+        mic.LoggerUtil.logExit(logger,"getAllUpgrades");
         return loadedData.values();
 
     }
 
     private static void loadData(int edition) {
-
+        mic.LoggerUtil.logEntry(logger,"loadData");
         // load from
         OTAMasterUpgrades data = new OTAMasterUpgrades();
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_UPGRADES_JSON_URL, OTAMasterUpgrades.class);
@@ -48,7 +50,7 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
                 loadedData.put(upgrade.getImage(), upgrade);
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
     public static class OTAUpgrade {

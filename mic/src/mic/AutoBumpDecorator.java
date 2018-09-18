@@ -1,29 +1,27 @@
 package mic;
 
+import VASSAL.build.GameModule;
+import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.boardPicker.Board;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.ChangeTracker;
+import VASSAL.command.Command;
+import VASSAL.command.MoveTracker;
+import VASSAL.configure.HotKeyConfigurer;
+import VASSAL.counters.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import mic.manuvers.ManeuverPaths;
+import mic.manuvers.PathPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.*;
-
-import VASSAL.build.GameModule;
-import VASSAL.build.module.map.boardPicker.Board;
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.counters.*;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.command.ChangeTracker;
-import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
-import VASSAL.configure.HotKeyConfigurer;
-import mic.manuvers.ManeuverPaths;
-import mic.manuvers.PathPart;
 
 import static mic.Util.*;
 
@@ -91,8 +89,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     public AutoBumpDecorator(GamePiece piece) {
+        mic.LoggerUtil.logEntry(logger,"AutoBumpDecorator");
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        mic.LoggerUtil.logExit(logger,"AutoBumpDecorator");
     }
 
     @Override
@@ -116,14 +116,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {
+        mic.LoggerUtil.logEntry(logger,"findPieceSlotByID");
         for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
             if(gpID.equals(ps.getGpId())) return ps;
         }
+        mic.LoggerUtil.logExit(logger,"findPieceSlotByID");
         return null;
     }
 
 
     private Command spawnRotatedPiece(ManeuverPaths theManeuv) {
+        mic.LoggerUtil.logEntry(logger,"spawnRotatedPiece");
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getAide_gpID()));
 
@@ -166,12 +169,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
-
+        mic.LoggerUtil.logExit(logger,"spawnRotatedPiece");
         return placeCommand;
     }
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
+        mic.LoggerUtil.logEntry(logger,"keyEvent");
         this.previousCollisionVisualization = new MapVisualizations();
 
         ManeuverPaths path = getKeystrokePath(stroke);
@@ -196,6 +200,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 }
             }
             // 'c' keystroke has finished here, leave the method altogether
+            mic.LoggerUtil.logExit(logger,"keyEvent");
             return piece.keyEvent(stroke);
         }
 
@@ -256,13 +261,16 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 innerCommand.append(this.previousCollisionVisualization);
                 this.previousCollisionVisualization.execute();
             }
+            mic.LoggerUtil.logExit(logger,"keyEvent");
             return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
+        mic.LoggerUtil.logExit(logger,"keyEvent");
         return piece.keyEvent(stroke);
     }
 
     private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
+        mic.LoggerUtil.logEntry(logger,"checkTemplateOverlap");
         List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
         MapVisualizations cvFoundHere = new MapVisualizations(lastMoveShapeUsed);
 
@@ -292,9 +300,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         if (howManyBumped > 0) {
             this.previousCollisionVisualization.add(lastMoveShapeUsed);
         }
+        mic.LoggerUtil.logExit(logger,"checkTemplateOverlap");
     }
 
     private void checkIfOutOfBounds(String yourShipName) {
+        mic.LoggerUtil.logEntry(logger,"checkIfOutOfBounds");
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -315,9 +325,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
             this.previousCollisionVisualization.add(theShape);
         }
+        mic.LoggerUtil.logExit(logger,"checkIfOutOfBounds");
     }
 
     private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
+        mic.LoggerUtil.logEntry(logger,"announceBumpAndPaint");
         Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
@@ -351,6 +363,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         if (howManyBumped > 0) {
             this.previousCollisionVisualization.add(theShape);
         }
+        mic.LoggerUtil.logExit(logger,"announceBumpAndPaint");
     }
 
 
@@ -361,6 +374,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private Command resolveBump(List<BumpableWithShape> otherBumpableShapes) {
+        mic.LoggerUtil.logEntry(logger,"resolveBump");
         if (this.lastManeuver == null || this.prevPosition == null) {
             return null;
         }
@@ -386,10 +400,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             BumpableWithShape bumpedBumpable = findCollidingEntity(movedShape, otherBumpableShapes);
             if (bumpedBumpable == null) {
+                mic.LoggerUtil.logExit(logger,"resolveBump");
                 return buildTranslateCommand(part,0.0f);
             }
         }
-
+        mic.LoggerUtil.logExit(logger,"resolveBump");
         // Could not find a position that wasn't bumping, bring it back to where it was before
         return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle), 0.0f);
     }
@@ -401,6 +416,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private Command buildTranslateCommand(PathPart part, double additionalAngle) {
+        mic.LoggerUtil.logEntry(logger,"buildTranslateCommand");
         // Copypasta from VASSAL.counters.Pivot
         ChangeTracker changeTracker = new ChangeTracker(this);
         getRotator().setAngle(part.getAngle() + additionalAngle);
@@ -426,6 +442,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         result = result.append(reporter.markMovedPieces());
 */
+        mic.LoggerUtil.logExit(logger,"buildTranslateCommand");
         return result;
     }
 
@@ -437,10 +454,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private BumpableWithShape findCollidingEntity(Shape myTestShape, List<BumpableWithShape> otherShapes) {
+        mic.LoggerUtil.logEntry(logger,"findCollidingEntity");
         List<BumpableWithShape> allCollidingEntities = findCollidingEntities(myTestShape, otherShapes);
         if (allCollidingEntities.size() > 0) {
+            mic.LoggerUtil.logExit(logger,"findCollidingEntity");
             return allCollidingEntities.get(0);
         } else {
+            mic.LoggerUtil.logExit(logger,"findCollidingEntity");
             return null;
         }
     }
@@ -453,19 +473,23 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
+        mic.LoggerUtil.logEntry(logger,"findCollidingEntities");
         List<BumpableWithShape> shapes = Lists.newLinkedList();
         for (BumpableWithShape otherBumpableShape : otherShapes) {
             if (Util.shapesOverlap(myTestShape, otherBumpableShape.shape)) {
                 shapes.add(otherBumpableShape);
             }
         }
+        mic.LoggerUtil.logExit(logger,"findCollidingEntities");
         return shapes;
     }
 
 
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
+        mic.LoggerUtil.logEntry(logger,"draw");
         this.piece.draw(graphics, i, i1, component, v);
+        mic.LoggerUtil.logExit(logger,"draw");
     }
 
     public Rectangle boundingBox() {
@@ -515,10 +539,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private ShipPositionState getCurrentState() {
+        mic.LoggerUtil.logEntry(logger,"getCurrentState");
         ShipPositionState shipState = new ShipPositionState();
         shipState.x = getPosition().getX();
         shipState.y = getPosition().getY();
         shipState.angle = getRotator().getAngle();
+        mic.LoggerUtil.logExit(logger,"getCurrentState");
         return shipState;
     }
 
@@ -530,14 +556,18 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
+        mic.LoggerUtil.logEntry(logger,"getKeystrokePath");
         String hotKey = HotKeyConfigurer.getString(keyStroke);
         if (keyStrokeToManeuver.containsKey(hotKey)) {
+            mic.LoggerUtil.logExit(logger,"getKeystrokePath");
             return keyStrokeToManeuver.get(hotKey);
         }
+        mic.LoggerUtil.logExit(logger,"getKeystrokePath");
         return null;
     }
 
     private List<BumpableWithShape> getShipsWithShapes() {
+        mic.LoggerUtil.logEntry(logger,"getShipsWithShapes");
         List<BumpableWithShape> ships = Lists.newLinkedList();
         for (BumpableWithShape ship : getShipsOnMap()) {
             if (getId().equals(ship.bumpable.getId())) {
@@ -545,10 +575,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
             ships.add(ship);
         }
+        mic.LoggerUtil.logExit(logger,"getShipsWithShapes");
         return ships;
     }
 
     private List<BumpableWithShape> getBumpablesWithShapes() {
+        mic.LoggerUtil.logEntry(logger,"getBumpablesWithShapes");
         List<BumpableWithShape> bumpables = Lists.newLinkedList();
         for (BumpableWithShape bumpable : getBumpablesOnMap()) {
             if (getId().equals(bumpable.bumpable.getId())) {
@@ -556,10 +588,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
             bumpables.add(bumpable);
         }
+        mic.LoggerUtil.logExit(logger,"getBumpablesWithShapes");
         return bumpables;
     }
 
     private List<BumpableWithShape> getShipsOnMap() {
+        mic.LoggerUtil.logEntry(logger,"getShipsOnMap");
         List<BumpableWithShape> ships = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
@@ -570,10 +604,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                         this.getInner().getState().contains("this_is_2pointoh")));
             }
         }
+        mic.LoggerUtil.logExit(logger,"getShipsOnMap");
         return ships;
     }
 
     private List<BumpableWithShape> getBumpablesOnMap() {
+        mic.LoggerUtil.logEntry(logger,"getBumpablesOnMap");
         List<BumpableWithShape> bumpables = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
@@ -599,6 +635,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             }
         }
+        mic.LoggerUtil.logExit(logger,"getBumpablesOnMap");
         return bumpables;
     }
 
@@ -611,15 +648,20 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private double convertAngleToGameLimits(double angle) {
+        mic.LoggerUtil.logEntry(logger,"convertAngleToGameLimits");
         this.testRotator.setAngle(angle);
+        mic.LoggerUtil.logExit(logger,"convertAngleToGameLimits");
         return this.testRotator.getAngle();
+
     }
 
 
     //1 = small, 2 = medium, 3 = large
     private int whichSizeShip(Decorator ship) {
+        mic.LoggerUtil.logEntry(logger,"whichSizeShip");
         if(BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 224) return 3;
         if(BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 167) return 2;
+        mic.LoggerUtil.logExit(logger,"whichSizeShip");
         return 1;
     }
 

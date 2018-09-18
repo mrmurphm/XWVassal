@@ -10,8 +10,6 @@ import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import mic.ota.OTAContentsChecker;
-import mic.ota.XWOTAUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +19,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -207,7 +204,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
             {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
+                /*
                 loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
+                        mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
+                        */
+                loadData(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl(),
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
             }else loadData();
 

@@ -2839,7 +2839,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
+        //    if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
+            if (piece.getState().contains("this_is_a_ship") && !piece.getId().equals(this.piece.getId())) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
                         piece.getState().contains("this_is_2pointoh")));

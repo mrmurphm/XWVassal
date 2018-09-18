@@ -10,6 +10,7 @@ import VASSAL.counters.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -28,6 +29,8 @@ public class Util {
 
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+
 
     public static <T> T loadRemoteJson(String url, Class<T> type) {
         try {

@@ -4,13 +4,9 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.properties.MutablePropertiesContainer;
-import VASSAL.build.module.properties.MutableProperty;
-import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
-import VASSAL.tools.io.FileArchive;
-import com.google.common.collect.Lists;
-import mic.ota.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,17 +19,15 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import static mic.Util.logToChat;
-
 /**
  * Created by Mic on 09/04/2017.
  * Make it so the URL pointed at is configurable in the vassal editor?
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
+
+    private static final Logger logger = LoggerFactory.getLogger(AnnouncementOnLog.class);
 
     // debug flag - setting this to false skips the onLoad download of OTA
     private static final boolean DEBUG_DO_DOWNLOAD = true;
@@ -53,15 +47,25 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     }
 
-    public void addTo(Buildable parent) {
+    public void addTo(Buildable parent)
+    {
+
+        mic.LoggerUtil.logEntry(logger,"addTo");
+
         openAnnouncementWindow();
+
+        mic.LoggerUtil.logExit(logger,"addTo");
     }
 
     private void openAnnouncementWindow()
     {
+        mic.LoggerUtil.logEntry(logger,"openAnnouncementWindow");
+
         checkForUpdate();
 
+
         try {
+
             URL url = new URL(defaultURL);
             URLConnection con = url.openConnection();
             con.setUseCaches(false);
@@ -74,19 +78,23 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 logToChat("* " + line);
             }
             in.close();
+
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL: " + e.getMessage());
 
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
+        mic.LoggerUtil.logExit(logger,"openAnnouncementWindow");
     }
 
     private void checkForUpdate() {
+        mic.LoggerUtil.logEntry(logger,"checkForUpdate");
         String userVersion = GameModule.getGameModule().getGameVersion();
         String msg ="";
         Boolean isGreater = false;
         try {
+            mic.LoggerUtil.logEntry(logger,"checkForUpdate - readCurrentVersionURL");
             URL url = new URL(currentVersionURL);
             URLConnection con = url.openConnection();
             con.setUseCaches(false);
@@ -111,8 +119,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                     break;
                 } else if(userPart > onlinePart) break;
             }
+            mic.LoggerUtil.logExit(logger,"checkForUpdate - readCurrentVersionURL");
 
-
+            mic.LoggerUtil.logEntry(logger,"checkForUpdate - readBlogURL");
             URL urlPatchNotes = new URL(blogURL);
             URLConnection con2 = urlPatchNotes.openConnection();
             con2.setUseCaches(false);
@@ -120,7 +129,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             String urlPatchString = in2.readLine();
             in2.close();
 
+            mic.LoggerUtil.logExit(logger,"checkForUpdate - readBlogURL");
 
+            mic.LoggerUtil.logEntry(logger,"checkForUpdate - buildScreen");
             if(isGreater == true) msg += "A new version is available!";
             else msg += "You have the latest version.";
 /*
@@ -233,7 +244,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
             JFrame frame = new JFrame();
             frame.setAlwaysOnTop(true);
-
+            mic.LoggerUtil.logExit(logger,"checkForUpdate - buildScreen");
             int answer = JOptionPane.showOptionDialog(frame, panel, "Welcome to the X-Wing vassal module",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new String[] { "OK" }, "OK");
@@ -243,10 +254,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.setAlwaysOnTop(false);
             frame.dispose();
 
-            if(answer==0) {
+       //     if(answer==0) {
                 //the jsons used to be downloaded here and kept in local copies, but the addTo method of the Content Checker is doing that now
-            }else{
-            }
+       //     }else{
+      //      }
 
             /*
             JOptionPane optionPane = new JOptionPane();
@@ -269,6 +280,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
+        mic.LoggerUtil.logExit(logger,"checkForUpdate");
     }
 
     public void removeFrom(Buildable parent) {

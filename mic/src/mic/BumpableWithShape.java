@@ -138,7 +138,7 @@ public class BumpableWithShape {
 
         chassisInfo result = chassisInfo.unknown;
 
-        if(is2pointoh==false){
+        if(!is2pointoh){
             if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
                 result= chassisInfo.small;
             }
@@ -151,7 +151,7 @@ public class BumpableWithShape {
             else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
                     && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
             //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
-        } else if(is2pointoh==true){
+        } else {
             if(Double.compare(rawWidth,chassisInfo.small2e.getWidth())==0) {
                 result= chassisInfo.small2e;
             }

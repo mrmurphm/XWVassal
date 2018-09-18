@@ -92,12 +92,14 @@ public class ModuleIntegrityChecker_2e {
 
                 // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
                 boolean gonnaDL = false;
-                if((conditionExists == false && conditionExistsInOTA) || (conditionTokenExists == false && conditionTokenExistsInOTA)) gonnaDL = true;
+               // if((conditionExists == false && conditionExistsInOTA) || (conditionTokenExists == false && conditionTokenExistsInOTA)) gonnaDL = true;
+                if(!conditionExists && (conditionExistsInOTA || conditionTokenExistsInOTA))
+                {
+                    gonnaDL = true;
+                }
 
-                if(
-                        (conditionExists ||  (!conditionExists && conditionExistsInOTA)) ||
-                        (conditionTokenExists || (!conditionTokenExists && conditionTokenExistsInOTA))
-                )
+                if((conditionExists ||  conditionExistsInOTA) ||
+                        (conditionTokenExists || conditionTokenExistsInOTA))
                 {
                                         conditionList.add(condition);
                                         if(onlyDetectOne && gonnaDL) return conditionList;
@@ -130,7 +132,7 @@ public class ModuleIntegrityChecker_2e {
             {
 
                 dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
-                if(dialHide.getStatus() || (!dialHide.getStatus() && XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))
+                if(dialHide.getStatus() ||  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))
                 {
                     dialHideList.add(dialHide);
                     if(onlyDetectOne) return dialHideList;
@@ -346,7 +348,7 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
                     dialMask.setShipXws(dialHide.getXws());
                     dialMask.setStatus(XWOTAUtils.imageExistsInModule(dialMaskImageName));
 
-                    if(dialMask.getStatus() || (!dialMask.getStatus() &&  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                    if(dialMask.getStatus() || XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)) {
                         dialMaskList.add(dialMask);
                         if(onlyDetectOne) return dialMaskList;
                     }
@@ -380,7 +382,7 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
             action = i.next();
             action.setStatus(XWOTAUtils.imageExistsInModule(action.getImage()));
 
-            if(action.getStatus() || (!action.getStatus() && XWOTAUtils.imageExistsInOTA("actions",action.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))){
+            if(action.getStatus() || XWOTAUtils.imageExistsInOTA("actions",action.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)){
                 actionList.add(action);
                 if(onlyDetectOne) return actionList;
             }

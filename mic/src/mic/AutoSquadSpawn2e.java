@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -495,8 +494,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String theFaction = "mixed";
-                if (factionsWanted.size() == 1 && xwingdata2ToYasb2.containsKey(factionsWanted.get(0).toString())) {
-                    theFaction = xwingdata2ToYasb2.get(factionsWanted.get(0).toString());
+                if (factionsWanted.size() == 1 && xwingdata2ToYasb2.containsKey(factionsWanted.get(0))) {
+                    theFaction = xwingdata2ToYasb2.get(factionsWanted.get(0));
                 }
                 generateXWS(rootPanel, entryArea, theFaction);
             }

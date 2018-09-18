@@ -247,7 +247,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    pilotXWSencoding = command.toString();
+                    pilotXWSencoding = command;
                 } catch (Exception e) {
                     logger.error("Error decoding PilotGenerateCommand", e);
                     return null;

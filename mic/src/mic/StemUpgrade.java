@@ -235,7 +235,7 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    upgradeXWS = command.toString();
+                    upgradeXWS = command;
                 } catch (Exception e) {
                     logger.error("Error decoding UpgradeGenerateCommand", e);
                     return null;

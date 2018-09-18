@@ -3,13 +3,16 @@ package mic;
 import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
 import mic.ota.XWOTAUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-
 /**
  * Created by amatheny on 2/27/17.
  */
 public class AltArtShipPicker {
+
+    private static final Logger logger = LoggerFactory.getLogger(AltArtShipPicker.class);
 
     private static final String[] UWING_ART = {"attack","landing"};
 
@@ -106,8 +109,8 @@ public class AltArtShipPicker {
 
     public static String getNewAltArtShip(String xwsPilot, String xwsShip, String faction)
     {
-
-        String altArt = new String();
+        mic.LoggerUtil.logEntry(logger,"getNewAltArtShip");
+        String altArt = "";
         boolean found = false;
 
         // first check for normal alt
@@ -152,23 +155,40 @@ public class AltArtShipPicker {
 
             altArt = "";
         }
-
+        mic.LoggerUtil.logExit(logger,"getNewAltArtShip");
         return altArt;
     }
 
-    public static PieceSlot getAltArtShip(String pilotName, Map<String, PieceSlot> altArtShips, PieceSlot defaultShip) {
+    public static PieceSlot getAltArtShip(String pilotName, Map<String, PieceSlot> altArtShips, PieceSlot defaultShip)
+    {
+        mic.LoggerUtil.logEntry(logger,"getAltArtShip");
         if (pilotName == null || altArtShips == null || altArtShips.size() == 0 || !pilotAltArts.containsKey(pilotName)) {
+            mic.LoggerUtil.logExit(logger,"getAltArtShip");
             return defaultShip;
         }
         String pattern = pilotAltArts.get(pilotName);
         if (pattern == null) {
+            mic.LoggerUtil.logExit(logger,"getAltArtShip");
             return defaultShip;
         }
+
+
+        for(Map.Entry<String,PieceSlot> altArtEntry: altArtShips.entrySet()) {
+            if (altArtEntry.getKey() != null && altArtEntry.getKey().toLowerCase().contains(pattern.toLowerCase())) {
+                mic.LoggerUtil.logExit(logger,"getAltArtShip");
+                return altArtShips.get(altArtEntry.getKey());
+            }
+        }
+
+        /*
         for(String altArtName: altArtShips.keySet()) {
             if (altArtName != null && altArtName.toLowerCase().contains(pattern.toLowerCase())) {
+                mic.LoggerUtil.logExit(logger,"getAltArtShip");
                 return altArtShips.get(altArtName);
             }
         }
+        */
+        mic.LoggerUtil.logExit(logger,"getAltArtShip");
         return defaultShip;
     }
 }

@@ -541,7 +541,7 @@ public class StemDial extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    xwsShipName = command.toString();
+                    xwsShipName = command;
                 } catch (Exception e) {
                     logger.error("Error decoding DialGenerateCommand", e);
                     return null;

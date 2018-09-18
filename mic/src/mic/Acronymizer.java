@@ -1,8 +1,10 @@
 package mic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Created by TerTer on 2017-02-24.
  */
@@ -10,7 +12,7 @@ public class Acronymizer {
     private static String THE = "The";
     private static String COLONEL = "Colonel";
     private static String LIEUTENANT = "Lieutenant";
-
+    private static final Logger logger = LoggerFactory.getLogger(Acronymizer.class);
     public static List<String> SHIP_NAME_PREFIXES = new ArrayList<String>();
     static
     {
@@ -20,6 +22,7 @@ public class Acronymizer {
     }
 
     public static String acronymizer(String cardName, boolean isUnique, boolean shortName) {
+        mic.LoggerUtil.logEntry(logger,"acronymizer");
         int maxLength = shortName ? 8 : 14;
         String name = cardName.replace("\"", "");
         String[] words = name.split(" ");
@@ -39,10 +42,14 @@ public class Acronymizer {
             }
         }
 
-        String firstLetters = "";
+        StringBuilder firstLetters = new StringBuilder();
+       // String firstLetters = "";
         for (String s: words){
-            firstLetters += s.charAt(0);
+            firstLetters.append(s.charAt(0));
+            //firstLetters += s.charAt(0);
         }
-        return firstLetters;
+        mic.LoggerUtil.logExit(logger,"acronymizer");
+       // return firstLetters;
+        return firstLetters.toString();
     }
 }

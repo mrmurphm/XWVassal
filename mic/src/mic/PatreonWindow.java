@@ -3,26 +3,18 @@ package mic;
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
-import VASSAL.build.module.*;
 import VASSAL.build.module.documentation.HelpFile;
-import com.google.common.collect.Lists;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
-
-import java.net.URL;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
-
-import static javax.imageio.ImageIO.setUseCache;
-import static mic.Util.logToChat;
 
 /**
  * Created by Mic on 22/10/2017.
@@ -33,7 +25,8 @@ public class PatreonWindow extends AbstractConfigurable  {
     private static String listofPatronsURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/patrons";
 
     private synchronized void PatreonWindow() {
-        String msg ="";
+        //String msg ="";
+        StringBuilder msg = new StringBuilder();
         try {
 
             URL urlPatchNotes = new URL(listofPatronsURL);
@@ -42,8 +35,10 @@ public class PatreonWindow extends AbstractConfigurable  {
             BufferedReader in = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                msg += line;
-                msg += "\n";
+                //msg += line;
+                msg.append(line);
+                //msg += "\n";
+                msg.append("\n");
             }
             in.close();
 
@@ -59,7 +54,7 @@ public class PatreonWindow extends AbstractConfigurable  {
             panel.add(link);
 
             JOptionPane optionPane = new JOptionPane();
-            optionPane.setMessage(msg);
+            optionPane.setMessage(msg.toString());
             //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
             optionPane.add(panel);
             JDialog dialog = optionPane.createDialog(frame, "Patreon Thank You List");

@@ -365,7 +365,11 @@ public class VassalXWSPieceLoader2e {
             //get the right pilotData from the same ship, but make sure to verify it's the right faction too!
             XWS2Pilots.Pilot2e pilotData = null;
             for(XWS2Pilots xws2pilot : allShips){
-                if(xws2pilot.getFaction()!=shipData.getFaction()) continue;
+//                if(xws2pilot.getFaction()!=shipData.getFaction()) continue;
+                if(!xws2pilot.getFaction().equals(shipData.getFaction()) )
+                {
+                    continue;
+                }
                 pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
             }
             if(pilotData == null) {

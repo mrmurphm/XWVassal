@@ -175,7 +175,7 @@ public class StemCondition2e extends Decorator implements EditablePiece {
 
                 command = command.substring(commandPrefix.length());
                 try {
-                    conditionXWS = command.toString();
+                    conditionXWS = command;
                 } catch (Exception e) {
                     logger.error("Error decoding ConditionGenerateCommand", e);
                     return null;
