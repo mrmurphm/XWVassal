@@ -1,8 +1,8 @@
 package mic;
 
-import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.module.PrototypeDefinition;
 import VASSAL.build.module.PrototypesContainer;
+import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -151,6 +151,16 @@ public class VassalXWSPilotPieces {
 
     public List<GamePiece> getTokensForDisplay() {
         List<GamePiece> tokenPieces = Lists.newArrayList();
+
+        for(Map.Entry<Tokens,PieceSlot> tokensEntry : tokens.entrySet())
+        {
+            GamePiece piece = Util.newPiece(tokens.get(tokensEntry.getKey()));
+            if (tokensEntry.getKey() == Tokens.targetlock && pilotData != null) {
+                piece.setProperty("ID", getDisplayPilotName());
+            }
+            tokenPieces.add(piece);
+        }
+        /*
         for (Tokens token : tokens.keySet()) {
             GamePiece piece = Util.newPiece(tokens.get(token));
             if (token == Tokens.targetlock && pilotData != null) {
@@ -158,6 +168,7 @@ public class VassalXWSPilotPieces {
             }
             tokenPieces.add(piece);
         }
+        */
         return tokenPieces;
     }
 

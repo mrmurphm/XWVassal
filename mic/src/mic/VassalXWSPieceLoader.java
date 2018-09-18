@@ -676,6 +676,18 @@ public class VassalXWSPieceLoader {
         }
 
         Map<String, XWSMasterUpgrades.UpgradeType> masterUpgrades = XWSMasterUpgrades.loadFromRemote();
+        for(Map.Entry<String, XWSMasterUpgrades.UpgradeType> upgradeTypeEntry : masterUpgrades.entrySet())
+        {
+            for(Map.Entry<String, XWSMasterUpgrades.Upgrade> upgradeNameEntry:masterUpgrades.get(upgradeTypeEntry.getKey()).upgrades.entrySet())
+            {
+                String pieceKey = getUpgradeMapKey(upgradeTypeEntry.getKey(), upgradeNameEntry.getKey());
+                if (!upgradePiecesMap.containsKey(pieceKey)) {
+                    missingKeys.add(pieceKey);
+                    Util.logToChat("Missing upgrade: " + pieceKey);
+                }
+            }
+        }
+        /*
         for (String upgradeType : masterUpgrades.keySet()) {
             for (String upgradeName : masterUpgrades.get(upgradeType).upgrades.keySet()) {
                 String pieceKey = getUpgradeMapKey(upgradeType, upgradeName);
@@ -685,6 +697,7 @@ public class VassalXWSPieceLoader {
                 }
             }
         }
+        */
 
         return missingKeys;
     }

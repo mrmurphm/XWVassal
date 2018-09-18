@@ -4,7 +4,6 @@ import VASSAL.build.module.PrototypeDefinition;
 import VASSAL.build.module.PrototypesContainer;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -94,7 +93,23 @@ public class VassalXWSPilotPieces2e {
 
     public List<GamePiece> getTokensForDisplay() {
         List<GamePiece> tokenPieces = Lists.newArrayList();
+
+
+/*
         for (String token : tokens.keySet()) {
+            GamePiece piece = Util.newPiece(tokens.get(token));
+            if (token.equals("Lock") && pilotData != null) {
+                piece.setProperty("ID", getDisplayPilotName());
+            }
+            tokenPieces.add(piece);
+        }
+
+        */
+
+        String token = null;
+        for(Map.Entry<String,PieceSlot> tokenEntry : tokens.entrySet())
+        {
+            token = tokenEntry.getKey();
             GamePiece piece = Util.newPiece(tokens.get(token));
             if (token.equals("Lock") && pilotData != null) {
                 piece.setProperty("ID", getDisplayPilotName());
