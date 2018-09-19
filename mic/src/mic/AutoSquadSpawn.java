@@ -10,6 +10,8 @@ import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,54 +30,61 @@ import static mic.Util.*;
  * Created by Mic on 12/02/2017.
  */
 public class AutoSquadSpawn extends AbstractConfigurable {
+    private static final Logger logger = LoggerFactory.getLogger(AutoSquadSpawn.class);
+    private static final String yasbURL = "http://geordanr.github.io/xwing/";
+    private static final String voidURL = "http://xwing-builder.co.uk/build";
+    private static final String fabsURL = "http://x-wing.fabpsb.net/gindex.php";
 
-    static final String yasbURL = "http://geordanr.github.io/xwing/";
-    static final String voidURL = "http://xwing-builder.co.uk/build";
-    static final String fabsURL = "http://x-wing.fabpsb.net/gindex.php";
-
-    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
+    private static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
     private boolean listHasHoundsTooth = false;
     private int houndsToothPilotSkill = 0;
 
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
     private List<JButton> spawnButtons = Lists.newArrayList();
-    MasterGameModeRouter mgmr = new MasterGameModeRouter();
-    String altXwingDataString = "";
+    private MasterGameModeRouter mgmr = new MasterGameModeRouter();
+    private String altXwingDataString = "";
 
     private void spawnPiece(GamePiece piece, Point position, Map playerMap) {
         Command placeCommand = playerMap.placeOrMerge(piece, position);
         placeCommand.execute();
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
-
+/*
     private Map getMap() {
+        mic.LoggerUtil.logEntry(logger,"getMap");
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if ("Contested Sector".equals(loopMap.getMapName())) {
+                mic.LoggerUtil.logExit(logger,"getMap");
                 return loopMap;
             }
         }
+        mic.LoggerUtil.logEntry(logger,"getMap");
         return null;
     }
-
-
+*/
+/*
     private void spawnForPlayerPostGate(){
 
     }
-
+*/
     private void spawnForPlayer(int playerIndex) {
+        mic.LoggerUtil.logEntry(logger,"spawnForPlayer");
         listHasHoundsTooth = false;
         houndsToothPilotSkill = 0;
 
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
+
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
 
         XWPlayerInfo playerInfo = getCurrentPlayer();
         if (playerInfo.getSide() != playerIndex) {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
 
@@ -170,10 +179,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         if(userInput==null){
             logToChat("Error - could not find anything in the input field of the autospawn dialog.");
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
         if(userInput.isEmpty()) {
             logToChat("Error - could not find anything in the input field of the autospawn dialog.");
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
 
@@ -181,6 +192,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         //step 1: throw out empty entries
         if (userInput == null || userInput.length() == 0) {
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
         userInput = userInput.trim();
@@ -195,6 +207,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             try {xwsList = loadListFromUrl(userInput);}
             catch(Exception e){
                 logToChat("Was not able to load the list");
+                mic.LoggerUtil.logExit(logger,"spawnForPlayer");
                 return;
             }
 
@@ -228,6 +241,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
 
         if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+            mic.LoggerUtil.logExit(logger,"spawnForPlayer");
             return;
         }
 
@@ -269,15 +283,30 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
         int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
         PieceSlot illicitPieceSlot = null;
-
+        boolean pilotHasOrdnanceSilos;
+        boolean pilotHasExtraMunitions;
+        GamePiece shipPiece;
+        GamePiece pilotPiece;
+        int pilotWidth;
+        int pilotHeight;
+        GamePiece dialPiece;
+        int dialWidth;
+        int totalUpgradeWidth;
+        List<Point> ordnanceLocations;
+        int ordnanceYOffset;
+        GamePiece upgradePiece;
+        String slotName;
+        GamePiece conditionPiece;
+        GamePiece conditionTokenPiece;
+        PieceSlot pieceSlot;
         for (VassalXWSPilotPieces ship : pieces.getShips())
         {
 
             // flag - does this pilot have the Extra Munitions upgrade card assigned
-            boolean pilotHasExtraMunitions = false;
+            pilotHasExtraMunitions = false;
 
             // flag - does this pilot have the  Silos upgrade card assigned
-            boolean pilotHasOrdnanceSilos = false;
+            pilotHasOrdnanceSilos = false;
 
             if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
             {
@@ -290,16 +319,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
-            GamePiece shipPiece = GamePieceGenerator.generateShip(ship);
+            shipPiece = GamePieceGenerator.generateShip(ship);
             shipBases.add(shipPiece);
 
             // ======================================================
             // Generate the Pilot Pieces
             // ======================================================
-            GamePiece pilotPiece = GamePieceGenerator.generatePilot(ship);
+            pilotPiece = GamePieceGenerator.generatePilot(ship);
 
-            int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
-            int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
+            pilotWidth = (int) pilotPiece.boundingBox().getWidth();
+            pilotHeight = (int) pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
             spawnPiece(pilotPiece, new Point(
                             (int) startPosition.getX(),
@@ -310,13 +339,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // ======================================================
             // Generate the Dial
             // ======================================================
-            GamePiece dialPiece = GamePieceGenerator.generateDial(ship);
+            dialPiece = GamePieceGenerator.generateDial(ship);
 
-            int dialWidth = (int) dialPiece.boundingBox().getWidth();
+             dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
-            int totalUpgradeWidth = 0;
+            totalUpgradeWidth = 0;
 
             //Check to see if this pilot has extra munitions or Ordnance Silos
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
@@ -328,8 +357,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 }
             }
 
-            List<Point> ordnanceLocations = Lists.newArrayList(); // list of coordinates to place ordnance tokens
-            int ordnanceYOffset = 50; // Y-Offset of where to place ordnance tokens relative to the upgrade card
+            ordnanceLocations = Lists.newArrayList(); // list of coordinates to place ordnance tokens
+            ordnanceYOffset = 50; // Y-Offset of where to place ordnance tokens relative to the upgrade card
 
 
             // ======================================================
@@ -338,7 +367,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades())
             {
 
-                GamePiece upgradePiece = GamePieceGenerator.generateUpgrade(upgrade);
+                upgradePiece = GamePieceGenerator.generateUpgrade(upgrade);
 
               //  GamePiece upgradePiece = upgrade.cloneGamePiece();
 
@@ -357,7 +386,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // if pilot has extra munitions, we will collect the positions of each card that can take it so we can add the tokens later
                 if(pilotHasExtraMunitions)
                 {
-                    String slotName = upgrade.getUpgradeData().getSlot();
+                    slotName = upgrade.getUpgradeData().getSlot();
                     if(slotName.equals("Bomb") || slotName.equals("Missile") || slotName.equals("Torpedo"))
                     {
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -369,7 +398,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // if pilot has Ordnance Silos, we will collect the positions of each card that can take it so we can add the tokens later
                 if(pilotHasOrdnanceSilos) {
 
-                    String slotName = upgrade.getUpgradeData().getSlot();
+                    slotName = upgrade.getUpgradeData().getSlot();
                     if (slotName.equals("Bomb") && !upgrade.getXwsName().equals("ordnancesilos")) {
                         // add three ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -388,7 +417,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    String slotName = upgrade.getUpgradeData().getSlot();
+                    slotName = upgrade.getUpgradeData().getSlot();
                     if(slotName.equals("Illicit"))
                     {
                         // add the coordinates to the list of ordnance token locations
@@ -410,7 +439,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // Generate the Conditions
             // ======================================================
             for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
-                GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
+                conditionPiece = GamePieceGenerator.generateCondition(condition);
                 /*
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
@@ -426,7 +455,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
                 // spawn the condition token
-                GamePiece conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
+                conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
                 spawnPiece(conditionTokenPiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
@@ -438,7 +467,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // Add all of the appropriate tokens
             // ======================================================
             for (GamePiece token : ship.getTokensForDisplay()) {
-                PieceSlot pieceSlot = new PieceSlot(token);
+                pieceSlot = new PieceSlot(token);
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTLWidth,
@@ -495,12 +524,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String listName = xwsList.getName();
         logToChat("The '" + aComboBox.getSelectedItem().toString() + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-
+        mic.LoggerUtil.logExit(logger,"spawnForPlayer");
     }
 
 
     private void validateList(XWSList list) throws XWSpawnException
     {
+        mic.LoggerUtil.logEntry(logger,"validateList");
+
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
         XWSList newList = null;
@@ -557,9 +588,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }
             exception.setNewList(newList);
             // throw the exception
+            mic.LoggerUtil.logExit(logger,"validateList");
             throw exception;
         }
-
+        mic.LoggerUtil.logExit(logger,"validateList");
     }
 /*
     private void downloadNecessaryImages(List<VassalXWSPilotPieces> ships)
@@ -799,12 +831,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 */
 
     public void addTo(Buildable parent) {
+        mic.LoggerUtil.logEntry(logger,"addTo");
         loadData();
 
+        JButton b;
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
-            JButton b = new JButton("Squad Spawn");
+            b = new JButton("Squad Spawn");
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -815,42 +849,53 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             getPlayerMap(i).getToolBar().add(b);
         }
+        mic.LoggerUtil.logExit(logger,"addTo");
     }
 
     public void removeFrom(Buildable parent) {
+        mic.LoggerUtil.logEntry(logger,"removeFrom");
         for (int i = 1; i <= 8; i++) {
             getPlayerMap(i).getToolBar().remove(spawnButtons.get(i - 1));
         }
+        mic.LoggerUtil.logExit(logger,"removeFrom");
     }
 
     private Map getPlayerMap(int playerIndex) {
+        mic.LoggerUtil.logEntry(logger,"getPlayerMap");
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                mic.LoggerUtil.logExit(logger,"getPlayerMap");
                 return loopMap;
             }
         }
+        mic.LoggerUtil.logExit(logger,"getPlayerMap");
         return null;
     }
 
     private void loadData() {
+        mic.LoggerUtil.logEntry(logger,"loadData");
         this.slotLoader.loadPieces();
         MasterPilotData.loadData();
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
     private void loadData(Boolean wantFullControl, String altDispatcherString) {
+        mic.LoggerUtil.logEntry(logger,"loadData");
         this.slotLoader.loadPieces();
-        mic.Util.logToChat("inside AutoSquadSpawn.loadData()");
+       // mic.Util.logToChat("inside AutoSquadSpawn.loadData()");
         MasterPilotData.loadData(wantFullControl, altDispatcherString);
-        mic.Util.logToChat("PilotDataLoaded");
+      //  mic.Util.logToChat("PilotDataLoaded");
         MasterUpgradeData.loadData(wantFullControl, altDispatcherString);
-        mic.Util.logToChat("UpgradeDataLoaded");
+      //  mic.Util.logToChat("UpgradeDataLoaded");
         MasterShipData.loadData(wantFullControl, altDispatcherString);
+        mic.LoggerUtil.logExit(logger,"loadData");
     }
 
 
     private XWSList loadListFromUrl(String userInput) {
+        mic.LoggerUtil.logEntry(logger,"loadListFromUrl");
         try {
             URL translatedURL = XWSUrlHelper.translate(userInput);
 
@@ -861,33 +906,42 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             XWSList xwsList = loadRemoteJson(translatedURL, XWSList.class);
 
             xwsList.setXwsSource(userInput);
+            mic.LoggerUtil.logExit(logger,"loadListFromUrl");
             return xwsList;
 
         } catch (Exception e) {
             logToChat("Unable to translate xws url '%s': %s", userInput, e.toString());
+            mic.LoggerUtil.logExit(logger,"loadListFromUrl");
             return null;
         }
     }
-
+/*
     //this is a quick json read to see if it's a 2nd edition squad. if so, report true at once.
     private boolean isListFor2ndEdition(String userInput) {
+        mic.LoggerUtil.logEntry(logger,"isListFor2ndEdition");
         try {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
-
+            mic.LoggerUtil.logExit(logger,"isListFor2ndEdition");
             return false;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            mic.LoggerUtil.logExit(logger,"isListFor2ndEdition");
             return false;
         }
+
     }
+    */
     private XWSList loadListFromRawJson(String userInput) {
+        mic.LoggerUtil.logEntry(logger,"loadListFromRawJson");
         try {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
+            mic.LoggerUtil.logExit(logger,"loadListFromRawJson");
             return list;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            mic.LoggerUtil.logExit(logger,"loadListFromRawJson");
             return null;
         }
     }
@@ -896,14 +950,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     private XWSList handleHoundsTooth(XWSList list)
     {
 
-
+        mic.LoggerUtil.logEntry(logger,"handleHoundsTooth");
+        java.util.Map<String,List<String>> upgrades;
+        List titleList;
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
             if (pilot.getShip().equals("yv666"))
             {
                 // check for the hounds tooth upgrade
-                java.util.Map<String, List<String>> upgrades = pilot.getUpgrades();
-                List titleList = upgrades.get("title");
+                upgrades = pilot.getUpgrades();
+                titleList = upgrades.get("title");
                 if(titleList != null)
                 {
 
@@ -931,25 +987,30 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         if(listHasHoundsTooth)
         {
             // add the pup
-            java.util.Map<String, List<String>> upgrades = Maps.newHashMap();
+            upgrades = Maps.newHashMap();
             java.util.Map<String, java.util.Map<String, String>> vendor = Maps.newHashMap();
             XWSList.XWSPilot pupPilot = new XWSList.XWSPilot("nashtahpuppilot","z95headhunter",upgrades,vendor,null);
             list.addPilot(pupPilot);
         }
+        mic.LoggerUtil.logExit(logger,"handleHoundsTooth");
         return list;
     }
-
+/*
     private XWSList loadListFromUserInput(String userInput) {
+        mic.LoggerUtil.logEntry(logger,"loadListFromUserInput");
         if (userInput == null || userInput.length() == 0) {
+            mic.LoggerUtil.logExit(logger,"loadListFromUserInput");
             return null;
         }
         userInput = userInput.trim();
         if (userInput.startsWith("{")) {
+            mic.LoggerUtil.logExit(logger,"loadListFromUserInput");
             return loadListFromRawJson(userInput);
         }
+        mic.LoggerUtil.logExit(logger,"loadListFromUserInput");
         return loadListFromUrl(userInput); //if there's ever a web squad builder that has a backend thing that can prepare a community driven squad json, then TODOSPAWN2E deal with those cases in here
     }
-
+*/
     // <editor-fold desc="unused vassal hooks">
     @Override
     public String[] getAttributeNames() {
